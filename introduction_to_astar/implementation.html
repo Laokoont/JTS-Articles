@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<!-- saved from url=(0066)http://www.redblobgames.com/pathfinding/a-star/implementation.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Implementation of A*</title><link rel="canonical" href="./Implementations_files/Implementations.html"><link rel="shortcut icon" href="http://www-cs-students.stanford.edu/~amitp/favicon.ico"><link rel="alternate" type="application/atom+xml" title="Blobs in Games - Atom" href="http://simblob.blogspot.com/feeds/posts/default"><meta name="verify-v1" content="82b+h1+tgwLrcTqTiJrqquMvoFVBwMwY11dx63m01zk="><meta name="robots" content="noodp"><meta name="viewport" content="width=640, maximum-scale=1.0"><link rel="apple-touch-icon" href="http://www-cs-students.stanford.edu/~amitp/red_blob.gif"><link href="./Implementations_files/css" rel="stylesheet" type="text/css"><style>
+              body{font-family:"Source Sans Pro", "Open Sans", "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", "Tahoma", sans-serif;font-size:14px;line-height:1.5;min-height:95%}body.width600{font-size:16px}tt,code,kbd,samp,pre{font-family:"Source Code Pro", monospace, serif, "Segoe UI Symbol", "Symbol";font-size:12px;font-size-adjust:none}.width600 tt,.width600 code,.width600 kbd,.width600 samp,.width600 pre{font-size:14px}nav{font-size:14px}header,h2{text-shadow:0px 2px 5px rgba(0,0,0,0.8);-moz-font-feature-settings:"liga=1,pnum=1,onum=1,kern=1";-ms-font-feature-settings:"liga" 1, "pnum" 1, "onum" 1, "kern" 1}h1{font-size:28px}h1 .subheading{letter-spacing:normal;font-size:14px}.width600 h1{font-size:32px}.width600 h1 .subheading{font-size:16px}sup,sub{position:relative;vertical-align:baseline;font-size:75%;line-height:0;padding-left:2px}sup{top:-0.5em}sub{bottom:-0.25em}*{-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box}html,body{margin:0;padding:0}body{background-color:#fff;color:#333}.main{max-width:1075px;margin-left:auto;margin-right:auto;padding:0 40px}header{display:block;text-align:center}h1{margin:0;padding:28px;padding-left:80px;text-align:left}header,.footer,.divider,h2{color:#fff;background-color:#bf4040;background-image:url(http://theory.stanford.edu/~amitp/transparent-blob.png),url(http://theory.stanford.edu/~amitp/transparent-blob.png);background-position:0 0, 16px 16px;-webkit-font-smoothing:antialiased}header a,.footer a,.divider a,h2 a{color:#f8ebeb}.comments,.divider-disqus{background-color:#e4e4e0}.comments{padding-bottom:20px;text-shadow:1px 1px 3px #fff}h2{margin:20px 0;padding:10px 40px;font-size:20px;max-width:530px}.width600 h2{max-width:680px}h2 a.anchor{float:right;width:2em;text-align:right;color:#bf4040}h2:hover a.anchor{color:#df9f9f}h3{margin:18px 0;font-size:18px}nav{display:block}nav ul{text-align:center;line-height:1.0;margin:0}nav ul li{display:inline-block;padding:2px 5px;text-align:center;width:10%;white-space:nowrap}nav ul li a{display:block;width:100%;font-weight:bold;text-decoration:none}nav ul li.nav:hover{background-color:rgba(0,0,0,0.5);font-weight:bold}nav ul li.navself{background-color:rgba(0,0,0,0.3);font-weight:bold}.topic{margin-left:40px;margin-right:40px;margin-bottom:35px;max-width:450px}.width600 .topic{max-width:600px}header,.divider,h2{border-bottom:1px solid #000}.divider,.footer,h2{border-top:1px solid #000}.divider{min-height:28px}.divider-disqus{padding-top:14px;text-align:center}.footer{clear:both;padding:7px 14px;border-top:1px solid #000}h2:target{-webkit-animation:target-attention 0.4s 1;-moz-animation:target-attention 0.4s 1}@-webkit-keyframes target-attention{0%{-webkit-transform:scale(1.1);transform:scale(1.1)}100%{-webkit-transform:scale(1);transform:scale(1.1)}}@-moz-keyframes target-attention{0%{-moz-transform:scale(1.1);transform:scale(1.1)}100%{-moz-transform:scale(1);transform:scale(1)}}h2:target{font-size:24px}div:target{border:1px dashed #888}kbd kbd{padding:1px 7px;margin:0px 1px 3px 1px;display:inline-block;font-size:11px;font-family:"Helvetica Neue", "Helvetica", "Tahoma", "Arial", sans-serif;white-space:nowrap;background:#ddd;color:#242;border:1px solid rgba(0,0,0,0.2);border-radius:3px;box-shadow:inset 0 0 1px 1px #fff,0 2px 0 rgba(0,0,0,0.3)}samp,kbd{background-color:#f4f4f0}code,samp{color:#442}kbd{margin:0 7px;color:#252}.topic>img{max-width:100%;-ms-interpolation-mode:bicubic}.topic figcaption{font-size:12px;text-align:center}a{color:#bf4040;text-decoration:none}a:hover{text-decoration:underline}.topic p,.topic li{text-align:justify;-webkit-hyphens:auto;-moz-hyphens:auto;hyphens:auto}nav,figure,abbr,acronym,code,kbd,samp,tt,var,pre{-webkit-hyphens:none;-moz-hyphens:none;hyphens:none}p,ul,ol,ul.spaced>li,ol.spaced>li{margin:1.25em 0}ul ul,ul ol,ol ul,ol ol,li ul,li ol{margin:0}ul,ol{margin-left:0;padding-left:21px}dt{font-weight:bold}pre{max-width:450px;line-height:1.4;font-size:12px;padding:4px 12px;resize:both;overflow:auto;white-space:pre-wrap;border-top:1px solid #ccc;border-bottom:1px solid #ccc;border-left-width:0;border-right-width:0}.width600 pre{max-width:600px}.width600 pre{font-size:14px}pre::-webkit-scrollbar{height:1em}pre::-webkit-scrollbar-thumb:horizontal{border-radius:0.5em;background:rgba(0,0,0,0.4)}ul pre,ol pre{width:450px}pre.simple,.comments pre{overflow:visible;width:100%;border:none;background:transparent;background-color:transparent;box-shadow:none}pre.snippet,pre.src{border-top-style:dashed;border-bottom-style:dashed}.topic>pre:only-child{padding-bottom:14px;border-bottom:1px solid rgba(0,0,0,0.5)}blockquote{font-style:italic}table.standard{border:1px solid rgba(0,0,0,0.5);border-collapse:collapse}table.standard th{background-color:#f8f8f8;background:linear-gradient(top, #f8f8f8,#f8f8f8,#f0f0f0)}table.standard td{background-color:#fff}table.standard th,table.standard td{border:1px solid rgba(0,0,0,0.5)}svg{overflow:hidden}tt,code{padding:0 2px}address{max-width:450px;text-align:right}.footer address{text-align:left}@media only screen and (max-width: 700px){.main{padding:0 10px}.topic{margin-left:10px;margin-right:10px}h2{max-width:400px}pre{font-size:10px}nav{font-size:12px}}@media only screen and (max-width: 600px){header,.footer{font-size:12px}h1{text-align:center;font-size:14px;padding:14px}nav span.longnav,nav form{display:none}nav ul li{width:15%}.omit-if-narrow,nav ul li.omit-if-narrow{display:none}pre{width:auto;font-size:9px}nav{font-size:10px}}form{margin:0}input[type="text"]{max-width:100%;border:1px solid rgba(0,0,0,0.7);background-color:#f8f8f4;color:#000;text-align:center;font-weight:bold}input[type="text"]:focus{background-color:#fffff4}input::-webkit-input-placeholder{color:#aaa}input::-moz-placeholder{color:#aaa}.TODO{color:red;border:2px solid white}pre.src .comment-delimiter,pre.src .nxml-comment-delimiter{color:#4488ff}pre.src .comment,pre.src .nxml-comment-content{color:#006699}pre.src .keyword{color:#406abf;font-weight:bold}pre.src .builtin{color:#508b20}pre.src .warning{color:#cc0000}pre.src .function-name{color:#268bd2;font-weight:bold}pre.src .variable-name{color:#00008b}pre.src .type{color:#6c71c4}pre.src .constant-face{color:#d33682}pre.src .doc{color:#666666;background-color:#e2e6e8}pre.src .string{color:#888888}pre.src .preprocessor{color:#859900}pre.src .negation-char,pre.src .sh-escaped-newline{color:#ff0000}pre.src .todo{color:#ffffff;background:#dc322f}pre.src .note{color:#ffffff;background:#2aa198}pre.src .hack{color:#ffffff;background:#859900}pre.src .paren{color:#a0a090;font-weight:bold}pre.src .minor-control-construct{color:#268bd2}pre.src .major-control-construct{color:#ff0000}pre.src-emacs-lisp .paren{color:#c9c9c4}pre.src-sh .string,pre.src-sh .comment{color:inherit}pre.src-python .highlight-indentation{border-right:2px solid #eeeeee}pre.src-xml .nxml-element-local-name{color:#406abf;font-weight:normal}pre.src-xml .nxml-tag-delimiter,pre.src-xml .nxml-tag-slash{color:#9cabc9;font-weight:bold}table.standard td.left,table.standard th.left{text-align:left}table.standard td.center,table.standard th.center{text-align:center}table.standard td.right,table.standard th.right{text-align:right}@media print{body{font-family:"Book Antiqua", "Times New Roman", serif;font-size:12pt;line-height:1.25}h1,h2,h3,h4,h5,h6,.footer,.divider-disqus{font-family:"Helvetica", sans-serif;font-size:12pt;text-rendering:optimizeLegibility}h1{font-size:18pt}h1 .subheading{font-size:12pt}header,h2{text-shadow:none}tt,code,kbd,samp,pre{font-family:"Courier", "Courier New", monospace;font-size:12pt}nav,.comments{display:none}}
+
+            
+  /* Need 70 columns for code, and with these extra margins it was too small, so I decreased font size .. */
+  pre.src { border: 8px solid hsl(60, 20%, 95%); padding: 8px 16px; margin-bottom: 0; box-shadow: inset 0 0 2px 1px hsla(60, 10%, 50%, 0.5); font-size: 13px; }
+  pre.example { background: hsl(60, 20%, 95%); padding-left: 16px; border-top: none; border-bottom: none; white-space: pre; }
+  div.org-src-container + pre.example { margin-top: 0; }
+  span[class^="section-number"] { color: hsl(0, 10%, 50%); padding-right: 0.5em; }
+  h2 span[class^="section-number"] { color: hsl(0, 20%, 80%); }
+</style></head><body class="gameprog width600"><header><h1 role="banner">Implementation of A*
+<div class="subheading">
+                  from <a href="http://www.redblobgames.com/">Red Blob Games</a>
+              </div></h1></header>
+               
+               <div class="main" role="main"><address>06 Jul 2014</address>
+               	
+               	<div id="table-of-contents"><h2>Содержание:</h2>
+               		
+               		<div id="text-table-of-contents">
+               			<ul style="list-style-type: none;">
+							<li><a href="#python">1. Реализация на Python</a>
+								<ul style="list-style-type: none;">
+									<li><a href="#sec-1-1">1.1. Поиск в ширину</a></li>
+									<li><a href="#sec-1-2">1.2. Ранний выход</a></li>
+									<li><a href="#sec-1-3">1.3. Алгоритм Дейкстры</a></li>
+									<li><a href="#sec-1-4">1.4. Поиск A*</a></li>
+								</ul>
+							</li>
+							<li><a href="#cplusplus">2. Реализация на C++</a>
+								<ul style="list-style-type: none;">
+									<li><a href="#sec-2-1">2.1. Поиск в ширину</a></li>
+									<li><a href="#sec-2-2">2.2. Ранний выход</a></li>
+									<li><a href="#sec-2-3">2.3. Алгоритм Дейкстры</a></li>
+									<li><a href="#sec-2-4">2.4. Поиск A*</a></li>
+								</ul>
+							</li>
+							
+							<li><a href="#optimizations">3. Оптимизация</a>
+								<ul style="list-style-type: none;">
+									<li><a href="#sec-3-1">3.1. Граф</a></li>
+									<li><a href="#sec-3-2">3.2. Очередь</a></li>
+									<li><a href="#sec-3-3">3.3. Поиск</a></li>
+								</ul>
+							</li>
+							<li><a href="#more">4. Что еще почитать?</a></li>
+						</ul>
+              		</div>
+              </div>
+              
+              <div class="topic">
+              	<p>На этой страничке я покажу, каким образом я реализовал алгоритмы, описанные в  <a href="introduction.html">основной статье</a>: поиск в ширину, алгоритм Дейкстры, жадный поиск &laquo;лучший-первый&raquo;, и A*. Я постарался не усложнять без надобности.</p>
+              </div>
+              <div class="h2banner"><h2 id="python"><a class="anchor" href="#python">#</a><span class="section-number">1&nbsp; </span>Реализация на Python</h2>
+              </div>
+              <div class="topic">
+              	<div class="outline-text-2" id="text-python">
+              	<p>Большую часть кода, изложенного ниже, я объясняю. Недостающие части вы сможете найти в исходнике <a href="/implementation.py">implementation.py</a>.</p>
+              </div>
+              <div id="outline-container-sec-1-1" class="outline-3"><h3 id="sec-1-1"><span class="section-number-3">1.1</span> Поиск в ширину</h3>
+              	<div class="outline-text-3" id="text-1-1">
+              <p>Начнем с реализации простого поиска в ширину на Python. В основной статье основной код алгоритма уже приведен, но нам нужно и описание обрабатываемого им графа. Вот абстракции, которые я использовал:</p>
+              <dl class="org-dl">
+              	<dt>Граф</dt><dd>структура данных, хранящая непосредственных и удаленных соседей заданной локации (больше о графах в <a href="http://www.redblobgames.com/pathfinding/grids/graphs.html">этой статье</a>)</dd>
+              	<dt>Локация</dt><dd>простое значение (число, строка, массив и т.п.) которое обозначает место в графе</dd>
+              	<dt>Поиск</dt><dd>алгоритм, который берет граф, начало обхода, и (опционально) конец обхода, и высчитывает некоторую полезную информацию (посещенные узлы, указатели на предыдущие узлы, дистанцию) для некоторых или всех локаций</dd>
+              	<dt>Очередь</dt><dd>структура данных, которую использует граф для упорядочивания обхода локаций</dd>
+              </dl>
+              <p>В основной статье я сосредоточился на алгоритмах <b>поиска</b>, здесь я опишу основные детали, необходимы для составления работающей программы. Начнем с <b>графа</b>:</p>
+
+            <div class="org-src-container">
+              	<pre class="src src-python"><span class="keyword">class</span> <span class="type">Graph</span>:
+<span class="highlight-indentation"></span>   <span class="minor-control-construct">def</span> <span class="function-name">__init__</span><span class="paren">(</span><span class="keyword">self</span><span class="paren">)</span>:
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="keyword">self</span>.edges = <span class="paren">{}</span>
+<span class="highlight-indentation"></span>   
+<span class="highlight-indentation"></span>   <span class="minor-control-construct">def</span> <span class="function-name">neighbors</span><span class="paren">(</span><span class="keyword">self</span>, <span class="builtin">id</span><span class="paren">)</span>:
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="major-control-construct">return</span> <span class="keyword">self</span>.edges<span class="paren">[</span><span class="builtin">id</span><span class="paren">]</span>
+				</pre>
+			</div>
+			<p>Вот и все, что нам нужно. &laquo;А где же объект узла?&raquo;,&mdash; спросите вы. А я отвечу, что редко когда вообще им пользуюсь: по-моему гораздо проще использовать числа, строки в качестве локаций, и отдельный массив с хеш-таблицами, в котором локации используются в качестве индексов.</p>
+			<p>Обратите внимание, что грани графа <i>направлены</i>: то есть, мы можем иметь грань, идущую от A к B, но не иметь обратной грани. В игровых картах большинство переходов направлены в обе стороны, но бывают односторонние двери или уступы, с которых можно спрыгнуть — такие вещи и отображаются в графе односторонними переходами. Составим граф-пример, в котором <b>локации</b> обозначены буквами A-E.</p>
+
+			<div class="results">
+				<div class="figure">
+					<p><img src="./Implementations_files/implementation-example-graph.png" alt="implementation-example-graph.png"></p>
+
+				</div>
+			</div>
+			<p>Для каждой локации я составил список, с какими другими локациями она соединена:</p>
+
+			<div class="org-src-container">
+				<pre class="src src-python"><span class="variable-name">example_graph</span> = Graph<span class="paren">()</span>
+<span class="variable-name">example_graph</span><span class="variable-name">.edges</span> = <span class="paren">{</span>
+<span class="highlight-indentation"></span>   <span class="string">'A'</span>: <span class="paren">[</span><span class="string">'B'</span><span class="paren">]</span>,
+<span class="highlight-indentation"></span>   <span class="string">'B'</span>: <span class="paren">[</span><span class="string">'A'</span>, <span class="string">'C'</span>, <span class="string">'D'</span><span class="paren">]</span>,
+<span class="highlight-indentation"></span>   <span class="string">'C'</span>: <span class="paren">[</span><span class="string">'A'</span><span class="paren">]</span>,
+<span class="highlight-indentation"></span>   <span class="string">'D'</span>: <span class="paren">[</span><span class="string">'E'</span>, <span class="string">'A'</span><span class="paren">]</span>,
+<span class="highlight-indentation"></span>   <span class="string">'E'</span>: <span class="paren">[</span><span class="string">'B'</span><span class="paren">]</span>
+<span class="paren">}</span>
+				</pre>
+			</div>
+			<p>Прежде, чем использовать этот граф, мы должны составить <b>очередь</b> (queue):</p>
+
+<div class="org-src-container"><pre class="src src-python"><span class="keyword">import</span> collections
+
+<span class="keyword">class</span> <span class="type">Queue</span>:
+<span class="highlight-indentation"></span>   <span class="minor-control-construct">def</span> <span class="function-name">__init__</span><span class="paren">(</span><span class="keyword">self</span><span class="paren">)</span>:
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="keyword">self</span>.elements = collections.deque<span class="paren">()</span>
+<span class="highlight-indentation"></span>   
+<span class="highlight-indentation"></span>   <span class="minor-control-construct">def</span> <span class="function-name">empty</span><span class="paren">(</span><span class="keyword">self</span><span class="paren">)</span>:
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="major-control-construct">return</span> <span class="builtin">len</span><span class="paren">(</span><span class="keyword">self</span>.elements<span class="paren">)</span> == <span class="constant">0</span>
+<span class="highlight-indentation"></span>   
+<span class="highlight-indentation"></span>   <span class="minor-control-construct">def</span> <span class="function-name">put</span><span class="paren">(</span><span class="keyword">self</span>, x<span class="paren">)</span>:
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="keyword">self</span>.elements.append<span class="paren">(</span>x<span class="paren">)</span>
+<span class="highlight-indentation"></span>   
+<span class="highlight-indentation"></span>   <span class="minor-control-construct">def</span> <span class="function-name">get</span><span class="paren">(</span><span class="keyword">self</span><span class="paren">)</span>:
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="major-control-construct">return</span> <span class="keyword">self</span>.elements.popleft<span class="paren">()</span>
+</pre>
+</div>
+			<p>Эта очередь служит простой оберткой для встроенного класса <code>collections.deque</code>. Вы можете использовать <code>deque</code> в вашем собственном коде совершенно свободно.</p>
+
+			<p>Теперь мы можем воспользоваться нашим графом и очередью в работе алгоритма посика в ширину:</p>
+
+<div class="org-src-container"><pre class="src src-python"><span class="keyword">def</span> <span class="function-name">breadth_first_search</span><span class="paren">(</span>graph, start<span class="paren">)</span>:
+<span class="highlight-indentation"></span>   <span class="variable-name">frontier</span> = Queue<span class="paren">()</span>
+<span class="highlight-indentation"></span>   frontier.put<span class="paren">(</span>start<span class="paren">)</span>
+<span class="highlight-indentation"></span>   <span class="variable-name">visited</span> = <span class="paren">{}</span>
+<span class="highlight-indentation"></span>   <span class="variable-name">visited</span><span class="paren">[</span>start<span class="paren">]</span> = <span class="constant">True</span>
+<span class="highlight-indentation"></span>   
+<span class="highlight-indentation"></span>   <span class="minor-control-construct">while</span> <span class="keyword">not</span> frontier.empty<span class="paren">()</span>:
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="variable-name">current</span> = frontier.get<span class="paren">()</span>
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="keyword">print</span><span class="paren">(</span><span class="string">"Visiting %r"</span> % current<span class="paren">)</span>
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="minor-control-construct">for</span> <span class="builtin">next</span> <span class="keyword">in</span> graph.neighbors<span class="paren">(</span>current<span class="paren">)</span>:
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="minor-control-construct">if</span> <span class="builtin">next</span> <span class="keyword">not</span> <span class="keyword">in</span> visited:
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   frontier.put<span class="paren">(</span><span class="builtin">next</span><span class="paren">)</span>
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="variable-name">visited</span><span class="paren">[</span><span class="builtin">next</span><span class="paren">]</span> = <span class="constant">True</span>
+
+breadth_first_search<span class="paren">(</span>example_graph, <span class="string">'A'</span><span class="paren">)</span>
+</pre>
+</div><pre class="example">Visiting 'A'
+Visiting 'B'
+Visiting 'C'
+Visiting 'D'
+Visiting 'E'
+</pre>
+			<p>Сетки тоже можно описать в виде графов. Я обозначу новый <b>граф</b> переменной <code>SquareGrid</code>, <b>локации</b> в котором представлены парами (int, int). Вместо того, чтобы хранить грани непосредственно, я буду вычислять их в функции <code>neighbors</code> (соседи).</p>
+
+<div class="org-src-container"><pre class="src src-python"><span class="keyword">class</span> <span class="type">SquareGrid</span>:
+<span class="highlight-indentation"></span>   <span class="minor-control-construct">def</span> <span class="function-name">__init__</span><span class="paren">(</span><span class="keyword">self</span>, width, height<span class="paren">)</span>:
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="keyword">self</span>.width = width
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="keyword">self</span>.height = height
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="keyword">self</span>.walls = <span class="paren">[]</span>
+<span class="highlight-indentation"></span>   
+<span class="highlight-indentation"></span>   <span class="minor-control-construct">def</span> <span class="function-name">in_bounds</span><span class="paren">(</span><span class="keyword">self</span>, <span class="builtin">id</span><span class="paren">)</span>:
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="paren">(</span>x, y<span class="paren">)</span> = <span class="builtin">id</span>
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="major-control-construct">return</span> <span class="constant">0</span> &lt;= x &lt; <span class="keyword">self</span>.width <span class="keyword">and</span> <span class="constant">0</span> &lt;= y &lt; <span class="keyword">self</span>.height
+<span class="highlight-indentation"></span>   
+<span class="highlight-indentation"></span>   <span class="minor-control-construct">def</span> <span class="function-name">passable</span><span class="paren">(</span><span class="keyword">self</span>, <span class="builtin">id</span><span class="paren">)</span>:
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="major-control-construct">return</span> <span class="builtin">id</span> <span class="keyword">not</span> <span class="keyword">in</span> <span class="keyword">self</span>.walls
+<span class="highlight-indentation"></span>   
+<span class="highlight-indentation"></span>   <span class="minor-control-construct">def</span> <span class="function-name">neighbors</span><span class="paren">(</span><span class="keyword">self</span>, <span class="builtin">id</span><span class="paren">)</span>:
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="paren">(</span>x, y<span class="paren">)</span> = <span class="builtin">id</span>
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="variable-name">results</span> = <span class="paren">[(</span>x+<span class="constant">1</span>, y<span class="paren">)</span>, <span class="paren">(</span>x, y-<span class="constant">1</span><span class="paren">)</span>, <span class="paren">(</span>x-<span class="constant">1</span>, y<span class="paren">)</span>, <span class="paren">(</span>x, y+<span class="constant">1</span><span class="paren">)]</span>
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="minor-control-construct">if</span> <span class="paren">(</span>x + y<span class="paren">)</span> % <span class="constant">2</span> == <span class="constant">0</span>: results.reverse<span class="paren">()</span> <span class="comment-delimiter"># </span><span class="comment">aesthetics</span>
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="variable-name">results</span> = <span class="builtin">filter</span><span class="paren">(</span><span class="keyword">self</span>.in_bounds, results<span class="paren">)</span>
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="variable-name">results</span> = <span class="builtin">filter</span><span class="paren">(</span><span class="keyword">self</span>.passable, results<span class="paren">)</span>
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="major-control-construct">return</span> results
+</pre>
+</div>
+			<p>Для начала протестируем код с первой сеткой из основной статьи:</p>
+
+<div class="org-src-container"><pre class="src src-python"><span class="variable-name">g</span> = SquareGrid<span class="paren">(</span><span class="constant">30</span>, <span class="constant">15</span><span class="paren">)</span>
+<span class="variable-name">g</span><span class="variable-name">.walls</span> = DIAGRAM1_WALLS <span class="comment-delimiter"># </span><span class="comment">long list, </span><span class="comment"><span class="paren">[(</span></span><span class="comment">21, 0</span><span class="comment"><span class="paren">)</span></span><span class="comment">, </span><span class="comment"><span class="paren">(</span></span><span class="comment">21, 2</span><span class="comment"><span class="paren">)</span></span><span class="comment">, ...</span><span class="comment"><span class="paren">]</span></span>
+draw_grid<span class="paren">(</span>g<span class="paren">)</span>
+</pre>
+</div><pre class="example">. . . . . . . . . . . . . . . . . . . . . ####. . . . . . . 
+. . . . . . . . . . . . . . . . . . . . . ####. . . . . . . 
+. . . . . . . . . . . . . . . . . . . . . ####. . . . . . . 
+. . . ####. . . . . . . . . . . . . . . . ####. . . . . . . 
+. . . ####. . . . . . . . ####. . . . . . ####. . . . . . . 
+. . . ####. . . . . . . . ####. . . . . . ##########. . . . 
+. . . ####. . . . . . . . ####. . . . . . ##########. . . . 
+. . . ####. . . . . . . . ####. . . . . . . . . . . . . . . 
+. . . ####. . . . . . . . ####. . . . . . . . . . . . . . . 
+. . . ####. . . . . . . . ####. . . . . . . . . . . . . . . 
+. . . ####. . . . . . . . ####. . . . . . . . . . . . . . . 
+. . . ####. . . . . . . . ####. . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . ####. . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . ####. . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . ####. . . . . . . . . . . . . . .
+</pre>
+			<p>Для того, чтобы восстановить путь, нам необходимо как-то сохранять локацию, из которой мы переходим, поэтому вместо переменной <code>visited</code> (True/False) я буду использовать <code>came_from</code> (location):</p>
+
+<div class="org-src-container"><pre class="src src-python"><span class="keyword">def</span> <span class="function-name">breadth_first_search</span><span class="paren">(</span>graph, start<span class="paren">)</span>:
+<span class="highlight-indentation"></span>   <span class="variable-name">frontier</span> = Queue<span class="paren">()</span>
+<span class="highlight-indentation"></span>   frontier.put<span class="paren">(</span>start<span class="paren">)</span>
+<span class="highlight-indentation"></span>   <span class="variable-name">came_from</span> = <span class="paren">{}</span>
+<span class="highlight-indentation"></span>   <span class="variable-name">came_from</span><span class="paren">[</span>start<span class="paren">]</span> = <span class="constant">None</span>
+<span class="highlight-indentation"></span>   
+<span class="highlight-indentation"></span>   <span class="minor-control-construct">while</span> <span class="keyword">not</span> frontier.empty<span class="paren">()</span>:
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="variable-name">current</span> = frontier.get<span class="paren">()</span>
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="minor-control-construct">for</span> <span class="builtin">next</span> <span class="keyword">in</span> graph.neighbors<span class="paren">(</span>current<span class="paren">)</span>:
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="minor-control-construct">if</span> <span class="builtin">next</span> <span class="keyword">not</span> <span class="keyword">in</span> came_from:
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   frontier.put<span class="paren">(</span><span class="builtin">next</span><span class="paren">)</span>
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="variable-name">came_from</span><span class="paren">[</span><span class="builtin">next</span><span class="paren">]</span> = current
+<span class="highlight-indentation"></span>   
+<span class="highlight-indentation"></span>   <span class="major-control-construct">return</span> came_from
+
+<span class="variable-name">g</span> = SquareGrid<span class="paren">(</span><span class="constant">30</span>, <span class="constant">15</span><span class="paren">)</span>
+<span class="variable-name">g</span><span class="variable-name">.walls</span> = DIAGRAM1_WALLS
+
+<span class="variable-name">parents</span> = breadth_first_search<span class="paren">(</span>g, <span class="paren">(</span><span class="constant">8</span>, <span class="constant">7</span><span class="paren">))</span>
+draw_grid<span class="paren">(</span>g, width=<span class="constant">2</span>, point_to=parents, start=<span class="paren">(</span><span class="constant">8</span>, <span class="constant">7</span><span class="paren">))</span>
+</pre>
+</div><pre class="example">→ → → → ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ← ← ← ← ← ####↓ ↓ ↓ ↓ ↓ ↓ ↓ 
+→ → → → → ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ← ← ← ← ← ← ####↓ ↓ ↓ ↓ ↓ ↓ ↓ 
+→ → → → → ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ← ← ← ← ← ← ← ####→ ↓ ↓ ↓ ↓ ↓ ↓ 
+→ → ↑ ####↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ← ← ← ← ← ← ← ← ####→ → ↓ ↓ ↓ ↓ ↓ 
+→ ↑ ↑ ####→ ↓ ↓ ↓ ↓ ↓ ↓ ← ####↑ ← ← ← ← ← ####→ → → ↓ ↓ ↓ ↓ 
+↑ ↑ ↑ ####→ → ↓ ↓ ↓ ↓ ← ← ####↑ ↑ ← ← ← ← ##########↓ ↓ ↓ ← 
+↑ ↑ ↑ ####→ → → ↓ ↓ ← ← ← ####↑ ↑ ↑ ← ← ← ##########↓ ↓ ← ← 
+↑ ↑ ↑ ####→ → → A ← ← ← ← ####↑ ↑ ↑ ↑ ← ← ← ← ← ← ← ← ← ← ← 
+↓ ↓ ↓ ####→ → ↑ ↑ ↑ ← ← ← ####↑ ↑ ↑ ↑ ↑ ← ← ← ← ← ← ← ← ← ← 
+↓ ↓ ↓ ####→ ↑ ↑ ↑ ↑ ↑ ← ← ####↑ ↑ ↑ ↑ ↑ ↑ ← ← ← ← ← ← ← ← ← 
+↓ ↓ ↓ ####↑ ↑ ↑ ↑ ↑ ↑ ↑ ← ####↑ ↑ ↑ ↑ ↑ ↑ ↑ ← ← ← ← ← ← ← ← 
+→ ↓ ↓ ####↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ####↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ← ← ← ← ← ← ← 
+→ → → → → ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ####↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ← ← ← ← ← ← 
+→ → → → ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ####↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ← ← ← ← ← 
+→ → → ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ####↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ← ← ← ←
+</pre>
+</div>
+</div>
+<div id="outline-container-sec-1-2" class="outline-3"><h3 id="sec-1-2"><span class="section-number-3">1.2</span> Ранний выход</h3>
+		<div class="outline-text-3" id="text-1-2">
+				<p>Следуя коду из основной статьи, нам необходимо добавить простую проверку ветвлением (<i>if</i>) в основном цикле. В алгоритме Дейкстры или обходе в ширину эта проверка необязательна, необходимой она становится только в жадном поиске и A*:</p>
+
+<div class="org-src-container"><pre class="src src-python"><span class="keyword">def</span> <span class="function-name">breadth_first_search</span><span class="paren">(</span>graph, start, goal<span class="paren">)</span>:
+<span class="highlight-indentation"></span>   <span class="variable-name">frontier</span> = Queue<span class="paren">()</span>
+<span class="highlight-indentation"></span>   frontier.put<span class="paren">(</span>start<span class="paren">)</span>
+<span class="highlight-indentation"></span>   <span class="variable-name">came_from</span> = <span class="paren">{}</span>
+<span class="highlight-indentation"></span>   <span class="variable-name">came_from</span><span class="paren">[</span>start<span class="paren">]</span> = <span class="constant">None</span>
+<span class="highlight-indentation"></span>   
+<span class="highlight-indentation"></span>   <span class="minor-control-construct">while</span> <span class="keyword">not</span> frontier.empty<span class="paren">()</span>:
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="variable-name">current</span> = frontier.get<span class="paren">()</span>
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="minor-control-construct">if</span> current == goal:
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="major-control-construct">break</span>
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="minor-control-construct">for</span> <span class="builtin">next</span> <span class="keyword">in</span> graph.neighbors<span class="paren">(</span>current<span class="paren">)</span>:
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="minor-control-construct">if</span> <span class="builtin">next</span> <span class="keyword">not</span> <span class="keyword">in</span> came_from:
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   frontier.put<span class="paren">(</span><span class="builtin">next</span><span class="paren">)</span>
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="variable-name">came_from</span><span class="paren">[</span><span class="builtin">next</span><span class="paren">]</span> = current
+<span class="highlight-indentation"></span>   
+<span class="highlight-indentation"></span>   <span class="major-control-construct">return</span> came_from
+
+<span class="variable-name">g</span> = SquareGrid<span class="paren">(</span><span class="constant">30</span>, <span class="constant">15</span><span class="paren">)</span>
+<span class="variable-name">g</span><span class="variable-name">.walls</span> = DIAGRAM1_WALLS
+
+<span class="variable-name">parents</span> = breadth_first_search<span class="paren">(</span>g, <span class="paren">(</span><span class="constant">8</span>, <span class="constant">7</span><span class="paren">)</span>, <span class="paren">(</span><span class="constant">17</span>, <span class="constant">2</span><span class="paren">))</span>
+draw_grid<span class="paren">(</span>g, width=<span class="constant">2</span>, point_to=parents, start=<span class="paren">(</span><span class="constant">8</span>, <span class="constant">7</span><span class="paren">)</span>, goal=<span class="paren">(</span><span class="constant">17</span>, <span class="constant">2</span><span class="paren">))</span>
+</pre>
+</div><pre class="example">. → → → ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ← . . . . ####. . . . . . . 
+→ → → → → ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ← ← ← . . . ####. . . . . . . 
+→ → → → → ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ← ← ← Z . . . ####. . . . . . . 
+→ → ↑ ####↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ← ← ← ← ← ← . . ####. . . . . . . 
+. ↑ ↑ ####→ ↓ ↓ ↓ ↓ ↓ ↓ ← ####↑ ← ← . . . ####. . . . . . . 
+. . ↑ ####→ → ↓ ↓ ↓ ↓ ← ← ####↑ ↑ . . . . ##########. . . . 
+. . . ####→ → → ↓ ↓ ← ← ← ####↑ . . . . . ##########. . . . 
+. . . ####→ → → A ← ← ← ← ####. . . . . . . . . . . . . . . 
+. . . ####→ → ↑ ↑ ↑ ← ← ← ####. . . . . . . . . . . . . . . 
+. . ↓ ####→ ↑ ↑ ↑ ↑ ↑ ← ← ####. . . . . . . . . . . . . . . 
+. ↓ ↓ ####↑ ↑ ↑ ↑ ↑ ↑ ↑ ← ####. . . . . . . . . . . . . . . 
+→ ↓ ↓ ####↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ####. . . . . . . . . . . . . . . 
+→ → → → → ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ####. . . . . . . . . . . . . . . 
+→ → → → ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ####. . . . . . . . . . . . . . . 
+. → → ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ####. . . . . . . . . . . . . . .
+</pre>
+				<p>Можно увидеть, что алгоритм останавливается, как только находит цель <code>Z</code>.</p>
+
+</div>
+</div>
+<div id="outline-container-sec-1-3" class="outline-3"><h3 id="sec-1-3"><span class="section-number-3">1.3</span> Алгоритм Дейкстры</h3>
+	<div class="outline-text-3" id="text-1-3">
+		<p>Здесь наша логика становится сложнее, потому что теперь необходимо совершать обход в более совершенном порядке, чем &laquo;первый вошел, первый вышел&raquo;. Что же придется изменить?</p>
+		<ol class="org-ol">
+			<li><i>Граф</i> должен содержать цену передвижения.</li>
+			<li><i>очередь</i> должна возврашать узлы в другом порядке.</li>
+			<li><i>поиск</i> должен учитывать цену переходов при добавлении узлов в очередь.</li>
+		</ol>
+</div>
+<div id="outline-container-sec-1-3-1" class="outline-4"><h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> Взвешенный граф</h4>
+	<div class="outline-text-4" id="text-1-3-1">
+		<p>Я добавлю новую функцию <code>cost(a, b)</code>, которая будет возвращать стоимость перехода из узла <code>a</code> к его соседу <code>b</code>. Альтернативным вариантом было бы встроить ее прямо в функицию <code>neighbors</code>.</p>
+
+<div class="org-src-container"><pre class="src src-python"><span class="keyword">class</span> <span class="type">GridWithWeights</span><span class="paren">(</span>SquareGrid<span class="paren">)</span>:
+<span class="highlight-indentation"></span>   <span class="minor-control-construct">def</span> <span class="function-name">__init__</span><span class="paren">(</span><span class="keyword">self</span>, width, height<span class="paren">)</span>:
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="builtin">super</span><span class="paren">()</span>.__init__<span class="paren">(</span>width, height<span class="paren">)</span>
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="keyword">self</span>.weights = <span class="paren">{}</span>
+<span class="highlight-indentation"></span>   
+<span class="highlight-indentation"></span>   <span class="minor-control-construct">def</span> <span class="function-name">cost</span><span class="paren">(</span><span class="keyword">self</span>, a, b<span class="paren">)</span>:
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="major-control-construct">return</span> <span class="keyword">self</span>.weights.get<span class="paren">(</span>b, <span class="constant">1</span><span class="paren">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-1-3-2" class="outline-4"><h4 id="sec-1-3-2"><span class="section-number-4">1.3.2</span> Очередь с приоритетом</h4>
+	<div class="outline-text-4" id="text-1-3-2">
+		<p>Такая очередь каждому элементу назначает числовой коэффициент, который и называется приоритетом. Когда требуется вернуть элемент, она выбирает такой с наименьшим приоритетом.</p>
+		<dl class="org-dl"><dt>insert</dt><dd>Добавляет элемент в очередь</dd><dt>remove</dt><dd>Удаляет элемент с наименьшим коэффициентом</dd><dt>reprioritize</dt><dd>(опционально) Меняет приоритет существующего элемента на меньший</dd></dl>
+		<p>Здесь приведена довольно быстрая реализация такой очереди, использущая <i>бинарные кучи</i>, но она не поддерживает команду reprioritize. Для получения нужных значений из очереди мы будем ипользовать пары (приоритет, элемент). Когда вставляемый элемент уже находится в очереди, мы получим дубликат; почему так можно делать, я объясню в параграфе &laquo;Оптимизация&raquo;.</p>
+
+<div class="org-src-container"><pre class="src src-python"><span class="keyword">import</span> heapq
+
+<span class="keyword">class</span> <span class="type">PriorityQueue</span>:
+<span class="highlight-indentation"></span>   <span class="minor-control-construct">def</span> <span class="function-name">__init__</span><span class="paren">(</span><span class="keyword">self</span><span class="paren">)</span>:
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="keyword">self</span>.elements = <span class="paren">[]</span>
+<span class="highlight-indentation"></span>   
+<span class="highlight-indentation"></span>   <span class="minor-control-construct">def</span> <span class="function-name">empty</span><span class="paren">(</span><span class="keyword">self</span><span class="paren">)</span>:
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="major-control-construct">return</span> <span class="builtin">len</span><span class="paren">(</span><span class="keyword">self</span>.elements<span class="paren">)</span> == <span class="constant">0</span>
+<span class="highlight-indentation"></span>   
+<span class="highlight-indentation"></span>   <span class="minor-control-construct">def</span> <span class="function-name">put</span><span class="paren">(</span><span class="keyword">self</span>, item, priority<span class="paren">)</span>:
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   heapq.heappush<span class="paren">(</span><span class="keyword">self</span>.elements, <span class="paren">(</span>priority, item<span class="paren">))</span>
+<span class="highlight-indentation"></span>   
+<span class="highlight-indentation"></span>   <span class="minor-control-construct">def</span> <span class="function-name">get</span><span class="paren">(</span><span class="keyword">self</span><span class="paren">)</span>:
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="major-control-construct">return</span> heapq.heappop<span class="paren">(</span><span class="keyword">self</span>.elements<span class="paren">)[</span><span class="constant">1</span><span class="paren">]</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-1-3-3" class="outline-4"><h4 id="sec-1-3-3"><span class="section-number-4">1.3.3</span> Поиск</h4>
+	<div class="outline-text-4" id="text-1-3-3">
+<p>Вот тут тонкий момент: как только мы добавили стоимости перехода, становится возможным посещение одной и той же локации несколько раз, с меньшим значением стоимости пути (переменная <code>cost_so_far</code>). А это значит, что строчка <code>if next not in came_from</code> н сработает так, как надо. Вместо этого мы будем проверять, не изменилась ли стоимость пути к локации с момента нашего предыдущего визита. (В оригинальной версии я не выполнял такой проверки, однако код все равно работал; <a href="http://www.redblobgames.com/pathfinding/posts/reprioritize.html">я написал несколько заметок про этот баг</a>.)</p>
+
+<p>Это карта с лесом с <a href="http://www.redblobgames.com/pathfinding/a-star/introduction.html#dijkstra">основной страницы</a>.</p>
+
+<div class="org-src-container"><pre class="src src-python"><span class="keyword">def</span> <span class="function-name">dijkstra_search</span><span class="paren">(</span>graph, start, goal<span class="paren">)</span>:
+<span class="highlight-indentation"></span>   <span class="variable-name">frontier</span> = PriorityQueue<span class="paren">()</span>
+<span class="highlight-indentation"></span>   frontier.put<span class="paren">(</span>start, <span class="constant">0</span><span class="paren">)</span>
+<span class="highlight-indentation"></span>   <span class="variable-name">came_from</span> = <span class="paren">{}</span>
+<span class="highlight-indentation"></span>   <span class="variable-name">cost_so_far</span> = <span class="paren">{}</span>
+<span class="highlight-indentation"></span>   <span class="variable-name">came_from</span><span class="paren">[</span>start<span class="paren">]</span> = <span class="constant">None</span>
+<span class="highlight-indentation"></span>   <span class="variable-name">cost_so_far</span><span class="paren">[</span>start<span class="paren">]</span> = <span class="constant">0</span>
+<span class="highlight-indentation"></span>   
+<span class="highlight-indentation"></span>   <span class="minor-control-construct">while</span> <span class="keyword">not</span> frontier.empty<span class="paren">()</span>:
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="variable-name">current</span> = frontier.get<span class="paren">()</span>
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="minor-control-construct">if</span> current == goal:
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="major-control-construct">break</span>
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="minor-control-construct">for</span> <span class="builtin">next</span> <span class="keyword">in</span> graph.neighbors<span class="paren">(</span>current<span class="paren">)</span>:
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="variable-name">new_cost</span> = cost_so_far<span class="paren">[</span>current<span class="paren">]</span> + graph.cost<span class="paren">(</span>current, <span class="builtin">next</span><span class="paren">)</span>
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="minor-control-construct">if</span> <span class="builtin">next</span> <span class="keyword">not</span> <span class="keyword">in</span> cost_so_far <span class="keyword">or</span> new_cost &lt; cost_so_far<span class="paren">[</span><span class="builtin">next</span><span class="paren">]</span>:
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="variable-name">cost_so_far</span><span class="paren">[</span><span class="builtin">next</span><span class="paren">]</span> = new_cost
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="variable-name">priority</span> = new_cost
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   frontier.put<span class="paren">(</span><span class="builtin">next</span>, priority<span class="paren">)</span>
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="variable-name">came_from</span><span class="paren">[</span><span class="builtin">next</span><span class="paren">]</span> = current
+<span class="highlight-indentation"></span>   
+<span class="highlight-indentation"></span>   <span class="major-control-construct">return</span> came_from, cost_so_far
+
+<span class="keyword">def</span> <span class="function-name">reconstruct_path</span><span class="paren">(</span>came_from, start, goal<span class="paren">)</span>:
+<span class="highlight-indentation"></span>   <span class="variable-name">current</span> = goal
+<span class="highlight-indentation"></span>   <span class="variable-name">path</span> = <span class="paren">[</span>current<span class="paren">]</span>
+<span class="highlight-indentation"></span>   <span class="minor-control-construct">while</span> current != start:
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="variable-name">current</span> = came_from<span class="paren">[</span>current<span class="paren">]</span>
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   path.append<span class="paren">(</span>current<span class="paren">)</span>
+<span class="highlight-indentation"></span>   <span class="major-control-construct">return</span> path
+</pre>
+</div><pre class="example"></pre>
+<p>Попробуем написанное в деле:</p>
+
+<div class="org-src-container"><pre class="src src-python"><span class="variable-name">came_from</span>, <span class="variable-name">cost_so_far</span> = dijkstra_search<span class="paren">(</span>diagram4, <span class="paren">(</span><span class="constant">1</span>, <span class="constant">4</span><span class="paren">)</span>, <span class="paren">(</span><span class="constant">7</span>, <span class="constant">8</span><span class="paren">))</span>
+draw_grid<span class="paren">(</span>diagram4, width=<span class="constant">3</span>, point_to=came_from, start=<span class="paren">(</span><span class="constant">1</span>, <span class="constant">4</span><span class="paren">)</span>, goal=<span class="paren">(</span><span class="constant">7</span>, <span class="constant">8</span><span class="paren">))</span>
+<span class="keyword">print</span><span class="paren">()</span>
+draw_grid<span class="paren">(</span>diagram4, width=<span class="constant">3</span>, number=cost_so_far, start=<span class="paren">(</span><span class="constant">1</span>, <span class="constant">4</span><span class="paren">)</span>, goal=<span class="paren">(</span><span class="constant">7</span>, <span class="constant">8</span><span class="paren">))</span>
+<span class="keyword">print</span><span class="paren">()</span>
+draw_grid<span class="paren">(</span>diagram4, width=<span class="constant">3</span>, path=reconstruct_path<span class="paren">(</span>came_from, start=<span class="paren">(</span><span class="constant">1</span>, <span class="constant">4</span><span class="paren">)</span>, goal=<span class="paren">(</span><span class="constant">7</span>, <span class="constant">8</span><span class="paren">)))</span>
+</pre>
+</div><pre class="example">↓  ↓  ←  ←  ←  ←  ←  ←  ←  ←  
+↓  ↓  ←  ←  ←  ↑  ↑  ←  ←  ←  
+↓  ↓  ←  ←  ←  ←  ↑  ↑  ←  ←  
+↓  ↓  ←  ←  ←  ←  ←  ↑  ↑  .  
+→  A  ←  ←  ←  ←  .  .  .  .  
+↑  ↑  ←  ←  ←  ←  .  .  .  .  
+↑  ↑  ←  ←  ←  ←  ←  .  .  .  
+↑  #########↑  ←  ↓  .  .  .  
+↑  #########↓  ↓  ↓  Z  .  .  
+↑  ←  ←  ←  ←  ←  ←  ←  ←  .  
+
+5  4  5  6  7  8  9  10 11 12 
+4  3  4  5  10 13 10 11 12 13 
+3  2  3  4  9  14 15 12 13 14 
+2  1  2  3  8  13 18 17 14 .  
+1  A  1  6  11 16 .  .  .  .  
+2  1  2  7  12 17 .  .  .  .  
+3  2  3  4  9  14 19 .  .  .  
+4  #########14 19 18 .  .  .  
+5  #########15 16 13 Z  .  .  
+6  7  8  9  10 11 12 13 14 .  
+
+.  .  .  .  .  .  .  .  .  .  
+.  .  .  .  .  .  .  .  .  .  
+.  .  .  .  .  .  .  .  .  .  
+.  .  .  .  .  .  .  .  .  .  
+@  @  .  .  .  .  .  .  .  .  
+@  .  .  .  .  .  .  .  .  .  
+@  .  .  .  .  .  .  .  .  .  
+@  #########.  .  .  .  .  .  
+@  #########.  .  @  @  .  .  
+@  @  @  @  @  @  @  .  .  .
+</pre>
+<p>Строчка <code>if next not in cost_so_far or new_cost &lt; cost_so_far[next]</code> может быть записана проще: <code>if new_cost &lt; cost_so_far.get(next, Infinity)</code> но я не хотел дополнительно нагружать статью объяснением метода <code>get()</code> в Python, так что я оставил все, как есть. Еще одним подходом может быть <code>collections.defaultdict</code> с заданным default в бесконечности.</p>
+
+</div>
+</div>
+</div>
+<div id="outline-container-sec-1-4" class="outline-3"><h3 id="sec-1-4"><span class="section-number-3">1.4</span> Поиск A*</h3>
+	<div class="outline-text-3" id="text-1-4">
+<p>И жадный поиск, и A* используют эвристическую функцию. Единственная разница заключается в том, что A* вместе с ней использует еще и упорядочивание из алгоритма Дейкстры, его я и покажу ниже.</p>
+
+<div class="org-src-container"><pre class="src src-python"><span class="keyword">def</span> <span class="function-name">heuristic</span><span class="paren">(</span>a, b<span class="paren">)</span>:
+<span class="highlight-indentation"></span>   <span class="paren">(</span>x1, y1<span class="paren">)</span> = a
+<span class="highlight-indentation"></span>   <span class="paren">(</span>x2, y2<span class="paren">)</span> = b
+<span class="highlight-indentation"></span>   <span class="major-control-construct">return</span> <span class="builtin">abs</span><span class="paren">(</span>x1 - x2<span class="paren">)</span> + <span class="builtin">abs</span><span class="paren">(</span>y1 - y2<span class="paren">)</span>
+
+<span class="keyword">def</span> <span class="function-name">a_star_search</span><span class="paren">(</span>graph, start, goal<span class="paren">)</span>:
+<span class="highlight-indentation"></span>   <span class="variable-name">frontier</span> = PriorityQueue<span class="paren">()</span>
+<span class="highlight-indentation"></span>   frontier.put<span class="paren">(</span>start, <span class="constant">0</span><span class="paren">)</span>
+<span class="highlight-indentation"></span>   <span class="variable-name">came_from</span> = <span class="paren">{}</span>
+<span class="highlight-indentation"></span>   <span class="variable-name">cost_so_far</span> = <span class="paren">{}</span>
+<span class="highlight-indentation"></span>   <span class="variable-name">came_from</span><span class="paren">[</span>start<span class="paren">]</span> = <span class="constant">None</span>
+<span class="highlight-indentation"></span>   <span class="variable-name">cost_so_far</span><span class="paren">[</span>start<span class="paren">]</span> = <span class="constant">0</span>
+<span class="highlight-indentation"></span>   
+<span class="highlight-indentation"></span>   <span class="minor-control-construct">while</span> <span class="keyword">not</span> frontier.empty<span class="paren">()</span>:
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="variable-name">current</span> = frontier.get<span class="paren">()</span>
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="minor-control-construct">if</span> current == goal:
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="major-control-construct">break</span>
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="minor-control-construct">for</span> <span class="builtin">next</span> <span class="keyword">in</span> graph.neighbors<span class="paren">(</span>current<span class="paren">)</span>:
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="variable-name">new_cost</span> = cost_so_far<span class="paren">[</span>current<span class="paren">]</span> + graph.cost<span class="paren">(</span>current, <span class="builtin">next</span><span class="paren">)</span>
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="minor-control-construct">if</span> <span class="builtin">next</span> <span class="keyword">not</span> <span class="keyword">in</span> cost_so_far <span class="keyword">or</span> new_cost &lt; cost_so_far<span class="paren">[</span><span class="builtin">next</span><span class="paren">]</span>:
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="variable-name">cost_so_far</span><span class="paren">[</span><span class="builtin">next</span><span class="paren">]</span> = new_cost
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="variable-name">priority</span> = new_cost + heuristic<span class="paren">(</span>goal, <span class="builtin">next</span><span class="paren">)</span>
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   frontier.put<span class="paren">(</span><span class="builtin">next</span>, priority<span class="paren">)</span>
+<span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="highlight-indentation"></span>   <span class="variable-name">came_from</span><span class="paren">[</span><span class="builtin">next</span><span class="paren">]</span> = current
+<span class="highlight-indentation"></span>   
+<span class="highlight-indentation"></span>   <span class="major-control-construct">return</span> came_from, cost_so_far
+</pre>
+</div><pre class="example"></pre>
+<p>Опробуем:</p>
+
+<div class="org-src-container"><pre class="src src-python"><span class="variable-name">came_from</span>, <span class="variable-name">cost_so_far</span> = a_star_search<span class="paren">(</span>diagram4, <span class="paren">(</span><span class="constant">1</span>, <span class="constant">4</span><span class="paren">)</span>, <span class="paren">(</span><span class="constant">7</span>, <span class="constant">8</span><span class="paren">))</span>
+draw_grid<span class="paren">(</span>diagram4, width=<span class="constant">3</span>, point_to=came_from, start=<span class="paren">(</span><span class="constant">1</span>, <span class="constant">4</span><span class="paren">)</span>, goal=<span class="paren">(</span><span class="constant">7</span>, <span class="constant">8</span><span class="paren">))</span>
+<span class="keyword">print</span><span class="paren">()</span>
+draw_grid<span class="paren">(</span>diagram4, width=<span class="constant">3</span>, number=cost_so_far, start=<span class="paren">(</span><span class="constant">1</span>, <span class="constant">4</span><span class="paren">)</span>, goal=<span class="paren">(</span><span class="constant">7</span>, <span class="constant">8</span><span class="paren">))</span>
+</pre>
+</div><pre class="example">.  .  .  .  .  .  .  .  .  .  
+.  ↓  ↓  ↓  .  .  .  .  .  .  
+↓  ↓  ↓  ↓  ←  .  .  .  .  .  
+↓  ↓  ↓  ←  ←  .  .  .  .  .  
+→  A  ←  ←  ←  .  .  .  .  .  
+→  ↑  ←  ←  ←  .  .  .  .  .  
+→  ↑  ←  ←  ←  ←  .  .  .  .  
+↑  #########↑  .  ↓  .  .  .  
+↑  #########↓  ↓  ↓  Z  .  .  
+↑  ←  ←  ←  ←  ←  ←  ←  .  .  
+
+.  .  .  .  .  .  .  .  .  .  
+.  3  4  5  .  .  .  .  .  .  
+3  2  3  4  9  .  .  .  .  .  
+2  1  2  3  8  .  .  .  .  .  
+1  A  1  6  11 .  .  .  .  .  
+2  1  2  7  12 .  .  .  .  .  
+3  2  3  4  9  14 .  .  .  .  
+4  #########14 .  18 .  .  .  
+5  #########15 16 13 Z  .  .  
+6  7  8  9  10 11 12 13 .  .
+</pre>
+</div>
+</div>
+</div>
+<div class="h2banner"><h2 id="cplusplus"><a class="anchor" href="http://www.redblobgames.com/pathfinding/a-star/implementation.html#cplusplus">#</a><span class="section-number">2&nbsp; </span>Реализация на C++</h2>
+</div>
+<div class="topic">
+	<div class="outline-text-2" id="text-cplusplus">
+<p>Файл с исходным кодом и необходимыми подключениями можно найти здесь: <a href="http://www.redblobgames.com/pathfinding/a-star/implementation.cpp">redblobgames/pathfinding/a-star/implementation.cpp</a>.</p>
+
+</div>
+<div id="outline-container-sec-2-1" class="outline-3"><h3 id="sec-2-1"><span class="section-number-3">2.1</span> Поиск в ширину</h3>
+	<div class="outline-text-3" id="text-2-1">
+<p>В этом разделе статьи я описываю только код, если вам нужно подробное объяснение — почитайте про реализацию на Python, суть одна и та же. Для начала, обычный класс для графа:</p>
+
+<div class="org-src-container"><pre class="src src-cpp"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> <span class="type">L</span>&gt;
+<span class="keyword">struct</span> <span class="type">Graph</span> <span class="minor-control-construct"><span class="paren">{</span></span>
+  <span class="keyword">typedef</span> <span class="type">L</span> <span class="type">Location</span>;
+  <span class="keyword">typedef</span> <span class="keyword">typename</span> <span class="constant">vector</span>&lt;<span class="type">Location</span>&gt;::<span class="type">iterator</span> <span class="type">iterator</span>;
+  <span class="type">unordered_map</span>&lt;<span class="type">Location</span>, <span class="type">vector</span>&lt;<span class="type">Location</span>&gt; &gt; <span class="variable-name">edges</span>;
+
+  <span class="keyword">inline</span> <span class="keyword">const</span> <span class="type">vector</span>&lt;<span class="type">Location</span>&gt;  <span class="function-name">neighbors</span><span class="paren">(</span><span class="type">Location</span> <span class="variable-name">id</span><span class="paren">)</span> <span class="minor-control-construct"><span class="paren">{</span></span>
+    <span class="major-control-construct">return</span> edges<span class="paren">[</span>id<span class="paren">]</span>;
+  <span class="minor-control-construct"><span class="paren">}</span></span>
+<span class="minor-control-construct"><span class="paren">}</span></span>;
+</pre>
+</div><pre class="example"></pre>
+<p>и точно такой же граф, как и в секции про Python. Здесь мы используем <code>char</code> для буквенного обозначения вершин:</p>
+
+<div class="figure">
+<p><img src="./Implementations_files/implementation-example-graph.png" alt="implementation-example-graph.png"></p>
+
+</div>
+<div class="org-src-container"><pre class="src src-cpp"><span class="type">Graph</span>&lt;<span class="type">char</span>&gt; <span class="variable-name">example_graph</span> <span class="minor-control-construct"><span class="paren">{{</span></span>
+    <span class="minor-control-construct"><span class="paren">{</span></span><span class="string">'A'</span>, <span class="minor-control-construct"><span class="paren">{</span></span><span class="string">'B'</span><span class="minor-control-construct"><span class="paren">}}</span></span>,
+    <span class="minor-control-construct"><span class="paren">{</span></span><span class="string">'B'</span>, <span class="minor-control-construct"><span class="paren">{</span></span><span class="string">'A'</span>, <span class="string">'C'</span>, <span class="string">'D'</span><span class="minor-control-construct"><span class="paren">}}</span></span>,
+    <span class="minor-control-construct"><span class="paren">{</span></span><span class="string">'C'</span>, <span class="minor-control-construct"><span class="paren">{</span></span><span class="string">'A'</span><span class="minor-control-construct"><span class="paren">}}</span></span>,
+    <span class="minor-control-construct"><span class="paren">{</span></span><span class="string">'D'</span>, <span class="minor-control-construct"><span class="paren">{</span></span><span class="string">'E'</span>, <span class="string">'A'</span><span class="minor-control-construct"><span class="paren">}}</span></span>,
+    <span class="minor-control-construct"><span class="paren">{</span></span><span class="string">'E'</span>, <span class="minor-control-construct"><span class="paren">{</span></span><span class="string">'B'</span><span class="minor-control-construct"><span class="paren">}}</span></span>
+  <span class="minor-control-construct"><span class="paren">}}</span></span>;
+</pre>
+</div><pre class="example"></pre>
+<p>Вместо определения своего класса очереди, можно использовать тот, что входит в стандартную библиотеку C++. Теперь сам поиск:</p>
+
+<div class="org-src-container"><pre class="src src-cpp"><span class="preprocessor">#include</span> <span class="string">"redblobgames/pathfinding/a-star/implementation.cpp"</span>
+
+<span class="keyword">template</span>&lt;<span class="keyword">typename</span> <span class="type">Graph</span>&gt;
+<span class="type">void</span> <span class="function-name">breadth_first_search</span><span class="paren">(</span><span class="type">Graph</span> <span class="variable-name">graph</span>, <span class="keyword">typename</span> <span class="constant">Graph</span>::<span class="type">Location</span> <span class="variable-name">start</span><span class="paren">)</span> <span class="minor-control-construct"><span class="paren">{</span></span>
+  <span class="keyword">typedef</span> <span class="keyword">typename</span> <span class="constant">Graph</span>::<span class="type">Location</span> <span class="type">Location</span>;
+  <span class="type">queue</span>&lt;<span class="type">Location</span>&gt; <span class="variable-name">frontier</span>;
+  frontier.push<span class="paren">(</span>start<span class="paren">)</span>;
+
+  <span class="type">unordered_set</span>&lt;<span class="type">Location</span>&gt; <span class="variable-name">visited</span>;
+  visited.insert<span class="paren">(</span>start<span class="paren">)</span>;
+
+  <span class="keyword">while</span> <span class="paren">(</span><span class="negation-char">!</span>frontier.empty<span class="paren">())</span> <span class="minor-control-construct"><span class="paren">{</span></span>
+    <span class="keyword">auto</span> <span class="type">current</span> = frontier.front<span class="paren">()</span>;
+    frontier.pop<span class="paren">()</span>;
+
+    <span class="constant">std</span>::cout &lt;&lt; <span class="string">"Visiting "</span> &lt;&lt; current &lt;&lt; <span class="constant">std</span>::endl;
+    <span class="keyword">for</span> <span class="paren">(</span><span class="keyword">auto</span> <span class="type">next</span> : graph.neighbors<span class="paren">(</span>current<span class="paren">))</span> <span class="minor-control-construct"><span class="paren">{</span></span>
+      <span class="keyword">if</span> <span class="paren">(</span><span class="negation-char">!</span>visited.count<span class="paren">(</span>next<span class="paren">))</span> <span class="minor-control-construct"><span class="paren">{</span></span>
+        frontier.push<span class="paren">(</span>next<span class="paren">)</span>;
+        visited.insert<span class="paren">(</span>next<span class="paren">)</span>;
+      <span class="minor-control-construct"><span class="paren">}</span></span>
+    <span class="minor-control-construct"><span class="paren">}</span></span>
+  <span class="minor-control-construct"><span class="paren">}</span></span>
+<span class="minor-control-construct"><span class="paren">}</span></span>
+
+
+<span class="type">int</span> <span class="function-name">main</span><span class="paren">()</span> <span class="minor-control-construct"><span class="paren">{</span></span>
+  breadth_first_search<span class="paren">(</span>example_graph, <span class="string">'A'</span><span class="paren">)</span>;
+<span class="minor-control-construct"><span class="paren">}</span></span>
+</pre>
+</div><pre class="example">Visiting A
+Visiting B
+Visiting C
+Visiting D
+Visiting E
+</pre>
+<p>Код получился чуть длиннее, чем на Python, но ничего страшного.</p>
+
+<p>А как на счет прямоугольных сеток? Определю новый класс сетки — обратите внимание, что он никак не связан с предыдущим — здесь я использую шаблоны, а не наследуемости. К графу надо добавить определение локации (<code>Location</code>) с помощью typedef и функцию <code>neighbors</code>, которая будет возвращать соседей.</p>
+
+<div class="org-src-container"><pre class="src src-cpp"><span class="keyword">struct</span> <span class="type">SquareGrid</span> <span class="minor-control-construct"><span class="paren">{</span></span>
+  <span class="keyword">typedef</span> <span class="type">tuple</span>&lt;<span class="type">int</span>,<span class="type">int</span>&gt; <span class="type">Location</span>;
+  <span class="keyword">static</span> <span class="type">array</span>&lt;<span class="type">Location</span>, <span class="constant">4</span>&gt; <span class="variable-name">DIRS</span>;
+
+  <span class="type">int</span> <span class="variable-name">width</span>, <span class="variable-name">height</span>;
+  <span class="type">unordered_set</span>&lt;<span class="type">Location</span>&gt; <span class="variable-name">walls</span>;
+
+  <span class="function-name">SquareGrid</span><span class="paren">(</span><span class="type">int</span> <span class="variable-name">width_</span>, <span class="type">int</span> <span class="variable-name">height_</span><span class="paren">)</span>
+     : width<span class="paren">(</span>width_<span class="paren">)</span>, <span class="type">height</span><span class="paren">(</span><span class="variable-name">height_</span><span class="paren">)</span> <span class="minor-control-construct"><span class="paren">{}</span></span>
+
+  <span class="keyword">inline</span> <span class="type">bool</span> <span class="function-name">in_bounds</span><span class="paren">(</span><span class="type">Location</span> <span class="variable-name">id</span><span class="paren">)</span> <span class="minor-control-construct"><span class="paren">{</span></span>
+    <span class="type">int</span> <span class="variable-name">x</span>, <span class="variable-name">y</span>;
+    tie <span class="paren">(</span>x, y<span class="paren">)</span> = id;
+    <span class="major-control-construct">return</span> <span class="constant">0</span> &lt;= x &amp;&amp; x &lt; width &amp;&amp; <span class="constant">0</span> &lt;= y &amp;&amp; y &lt; height;
+  <span class="minor-control-construct"><span class="paren">}</span></span>
+
+  <span class="keyword">inline</span> <span class="type">bool</span> <span class="function-name">passable</span><span class="paren">(</span><span class="type">Location</span> <span class="variable-name">id</span><span class="paren">)</span> <span class="minor-control-construct"><span class="paren">{</span></span>
+    <span class="major-control-construct">return</span> <span class="major-control-construct">!</span>walls.count<span class="paren">(</span>id<span class="paren">)</span>;
+  <span class="minor-control-construct"><span class="paren">}</span></span>
+
+  <span class="type">vector</span>&lt;<span class="type">Location</span>&gt; <span class="function-name">neighbors</span><span class="paren">(</span><span class="type">Location</span> <span class="variable-name">id</span><span class="paren">)</span> <span class="minor-control-construct"><span class="paren">{</span></span>
+    <span class="type">int</span> <span class="variable-name">x</span>, <span class="variable-name">y</span>, <span class="variable-name">dx</span>, <span class="variable-name">dy</span>;
+    tie <span class="paren">(</span>x, y<span class="paren">)</span> = id;
+    <span class="type">vector</span>&lt;<span class="type">Location</span>&gt; <span class="variable-name">results</span>;
+
+    <span class="keyword">for</span> <span class="paren">(</span><span class="keyword">auto</span> <span class="type">dir</span> : DIRS<span class="paren">)</span> <span class="minor-control-construct"><span class="paren">{</span></span>
+      tie <span class="paren">(</span>dx, dy<span class="paren">)</span> = dir;
+      <span class="type">Location</span> <span class="variable-name">next</span><span class="paren">(</span>x + dx, y + dy<span class="paren">)</span>;
+      <span class="keyword">if</span> <span class="paren">(</span>in_bounds<span class="paren">(</span>next<span class="paren">)</span> &amp;&amp; passable<span class="paren">(</span>next<span class="paren">))</span> <span class="minor-control-construct"><span class="paren">{</span></span>
+        results.push_back<span class="paren">(</span>next<span class="paren">)</span>;
+      <span class="minor-control-construct"><span class="paren">}</span></span>
+    <span class="minor-control-construct"><span class="paren">}</span></span>
+
+    <span class="keyword">if</span> <span class="paren">((</span>x + y<span class="paren">)</span> % <span class="constant">2</span> == <span class="constant">0</span><span class="paren">)</span> <span class="minor-control-construct"><span class="paren">{</span></span>
+      <span class="comment-delimiter">// </span><span class="comment">aesthetic improvement on square grids</span>
+      <span class="constant">std</span>::reverse<span class="paren">(</span>results.begin<span class="paren">()</span>, results.end<span class="paren">())</span>;
+    <span class="minor-control-construct"><span class="paren">}</span></span>
+
+    <span class="major-control-construct">return</span> results;
+  <span class="minor-control-construct"><span class="paren">}</span></span>
+<span class="minor-control-construct"><span class="paren">}</span></span>;
+
+<span class="type">array</span>&lt;<span class="constant">SquareGrid</span>::Location, <span class="constant">4</span>&gt; <span class="constant">SquareGrid</span>::<span class="variable-name">DIRS</span> <span class="minor-control-construct"><span class="paren">{</span></span>Location<span class="minor-control-construct"><span class="paren">{</span></span><span class="constant">1</span>, <span class="constant">0</span><span class="minor-control-construct"><span class="paren">}</span></span>, Location<span class="minor-control-construct"><span class="paren">{</span></span><span class="constant">0</span>, -<span class="constant">1</span><span class="minor-control-construct"><span class="paren">}</span></span>, Location<span class="minor-control-construct"><span class="paren">{</span></span>-<span class="constant">1</span>, <span class="constant">0</span><span class="minor-control-construct"><span class="paren">}</span></span>, Location<span class="minor-control-construct"><span class="paren">{</span></span><span class="constant">0</span>, <span class="constant">1</span><span class="minor-control-construct"><span class="paren">}}</span></span>;
+</pre>
+</div><pre class="example"></pre>
+<p>В файлике <code>implementation.cpp</code> я также обозначил функцию, &laquo;прорисовывающую&raquo; нашу сетку:</p>
+
+<div class="org-src-container"><pre class="src src-cpp"><span class="preprocessor">#include</span> <span class="string">"redblobgames/pathfinding/a-star/implementation.cpp"</span>
+
+<span class="type">int</span> <span class="function-name">main</span><span class="paren">()</span> <span class="minor-control-construct"><span class="paren">{</span></span>
+  <span class="type">SquareGrid</span> <span class="variable-name">grid</span> = make_diagram1<span class="paren">()</span>;
+  draw_grid<span class="paren">(</span>grid, <span class="constant">2</span><span class="paren">)</span>;
+<span class="minor-control-construct"><span class="paren">}</span></span>
+</pre>
+</div><pre class="example">. . . . . . . . . . . . . . . . . . . . . ####. . . . . . . 
+. . . . . . . . . . . . . . . . . . . . . ####. . . . . . . 
+. . . . . . . . . . . . . . . . . . . . . ####. . . . . . . 
+. . . ####. . . . . . . . . . . . . . . . ####. . . . . . . 
+. . . ####. . . . . . . . ####. . . . . . ####. . . . . . . 
+. . . ####. . . . . . . . ####. . . . . . ##########. . . . 
+. . . ####. . . . . . . . ####. . . . . . ##########. . . . 
+. . . ####. . . . . . . . ####. . . . . . . . . . . . . . . 
+. . . ####. . . . . . . . ####. . . . . . . . . . . . . . . 
+. . . ####. . . . . . . . ####. . . . . . . . . . . . . . . 
+. . . ####. . . . . . . . ####. . . . . . . . . . . . . . . 
+. . . ####. . . . . . . . ####. . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . ####. . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . ####. . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . ####. . . . . . . . . . . . . . .
+</pre>
+<p>Теперь пропробуем сделать тот же поиск в ширину, на этот раз учитывая <code>came_from</code>:</p>
+
+<div class="org-src-container"><pre class="src src-cpp"><span class="preprocessor">#include</span> <span class="string">"redblobgames/pathfinding/a-star/implementation.cpp"</span>
+
+<span class="keyword">template</span>&lt;<span class="keyword">typename</span> <span class="type">Graph</span>&gt;
+<span class="type">unordered_map</span>&lt;<span class="keyword">typename</span> <span class="constant">Graph</span>::<span class="type">Location</span>, <span class="keyword">typename</span> <span class="constant">Graph</span>::<span class="type">Location</span>&gt;
+<span class="function-name">breadth_first_search</span><span class="paren">(</span><span class="type">Graph</span> <span class="variable-name">graph</span>, <span class="keyword">typename</span> <span class="constant">Graph</span>::<span class="type">Location</span> <span class="variable-name">start</span><span class="paren">)</span> <span class="minor-control-construct"><span class="paren">{</span></span>
+  <span class="keyword">typedef</span> <span class="keyword">typename</span> <span class="constant">Graph</span>::<span class="type">Location</span> <span class="type">Location</span>;
+  <span class="type">queue</span>&lt;<span class="type">Location</span>&gt; <span class="variable-name">frontier</span>;
+  frontier.push<span class="paren">(</span>start<span class="paren">)</span>;
+
+  <span class="type">unordered_map</span>&lt;<span class="type">Location</span>, <span class="type">Location</span>&gt; <span class="variable-name">came_from</span>;
+  came_from<span class="paren">[</span>start<span class="paren">]</span> = start;
+
+  <span class="keyword">while</span> <span class="paren">(</span><span class="negation-char">!</span>frontier.empty<span class="paren">())</span> <span class="minor-control-construct"><span class="paren">{</span></span>
+    <span class="keyword">auto</span> <span class="type">current</span> = frontier.front<span class="paren">()</span>;
+    frontier.pop<span class="paren">()</span>;
+
+    <span class="keyword">for</span> <span class="paren">(</span><span class="keyword">auto</span> <span class="type">next</span> : graph.neighbors<span class="paren">(</span>current<span class="paren">))</span> <span class="minor-control-construct"><span class="paren">{</span></span>
+      <span class="keyword">if</span> <span class="paren">(</span><span class="negation-char">!</span>came_from.count<span class="paren">(</span>next<span class="paren">))</span> <span class="minor-control-construct"><span class="paren">{</span></span>
+        frontier.push<span class="paren">(</span>next<span class="paren">)</span>;
+        came_from<span class="paren">[</span>next<span class="paren">]</span> = current;
+      <span class="minor-control-construct"><span class="paren">}</span></span>
+    <span class="minor-control-construct"><span class="paren">}</span></span>
+  <span class="minor-control-construct"><span class="paren">}</span></span>
+  <span class="major-control-construct">return</span> came_from;
+<span class="minor-control-construct"><span class="paren">}</span></span>
+
+<span class="type">int</span> <span class="function-name">main</span><span class="paren">()</span> <span class="minor-control-construct"><span class="paren">{</span></span>
+  <span class="type">SquareGrid</span> <span class="variable-name">grid</span> = make_diagram1<span class="paren">()</span>;
+  <span class="keyword">auto</span> <span class="type">parents</span> = breadth_first_search<span class="paren">(</span>grid, <span class="constant">std</span>::make_tuple<span class="paren">(</span><span class="constant">7</span>, <span class="constant">8</span><span class="paren">))</span>;
+  draw_grid<span class="paren">(</span>grid, <span class="constant">2</span>, nullptr, &amp;parents<span class="paren">)</span>;
+<span class="minor-control-construct"><span class="paren">}</span></span>
+</pre>
+</div><pre class="example">→ → → → ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ← ← ← ← ← ####↓ ↓ ↓ ↓ ↓ ↓ ↓ 
+→ → → → → ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ← ← ← ← ← ← ####↓ ↓ ↓ ↓ ↓ ↓ ↓ 
+→ → → → → ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ← ← ← ← ← ← ← ####→ ↓ ↓ ↓ ↓ ↓ ↓ 
+→ → ↑ ####↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ← ← ← ← ← ← ← ← ####→ → ↓ ↓ ↓ ↓ ↓ 
+→ ↑ ↑ ####↓ ↓ ↓ ↓ ↓ ↓ ↓ ← ####↑ ← ← ← ← ← ####→ → → ↓ ↓ ↓ ↓ 
+↑ ↑ ↑ ####↓ ↓ ↓ ↓ ↓ ↓ ← ← ####↑ ↑ ← ← ← ← ##########↓ ↓ ↓ ← 
+↑ ↑ ↑ ####→ ↓ ↓ ↓ ↓ ← ← ← ####↑ ↑ ↑ ← ← ← ##########↓ ↓ ← ← 
+↓ ↓ ↓ ####→ → ↓ ↓ ← ← ← ← ####↑ ↑ ↑ ↑ ← ← ← ← ← ← ← ← ← ← ← 
+↓ ↓ ↓ ####→ → * ← ← ← ← ← ####↑ ↑ ↑ ↑ ↑ ← ← ← ← ← ← ← ← ← ← 
+↓ ↓ ↓ ####→ ↑ ↑ ↑ ← ← ← ← ####↑ ↑ ↑ ↑ ↑ ↑ ← ← ← ← ← ← ← ← ← 
+↓ ↓ ↓ ####↑ ↑ ↑ ↑ ↑ ← ← ← ####↑ ↑ ↑ ↑ ↑ ↑ ↑ ← ← ← ← ← ← ← ← 
+→ ↓ ↓ ####↑ ↑ ↑ ↑ ↑ ↑ ← ← ####↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ← ← ← ← ← ← ← 
+→ → → → → ↑ ↑ ↑ ↑ ↑ ↑ ↑ ← ####↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ← ← ← ← ← ← 
+→ → → → ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ####↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ← ← ← ← ← 
+→ → → ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ####↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ← ← ← ←
+</pre>
+</div>
+</div>
+<div id="outline-container-sec-2-2" class="outline-3"><h3 id="sec-2-2"><span class="section-number-3">2.2</span> Early Exit</h3>
+	<div class="outline-text-3" id="text-2-2">
+<p>As with the Python version, all we have to do is add a parameter to the function and a test to the main loop:</p>
+
+<div class="org-src-container"><pre class="src src-cpp"><span class="preprocessor">#include</span> <span class="string">"redblobgames/pathfinding/a-star/implementation.cpp"</span>
+
+<span class="keyword">template</span>&lt;<span class="keyword">typename</span> <span class="type">Graph</span>&gt;
+<span class="type">unordered_map</span>&lt;<span class="keyword">typename</span> <span class="constant">Graph</span>::<span class="type">Location</span>, <span class="keyword">typename</span> <span class="constant">Graph</span>::<span class="type">Location</span>&gt;
+<span class="function-name">breadth_first_search</span><span class="paren">(</span><span class="type">Graph</span> <span class="variable-name">graph</span>,
+                     <span class="keyword">typename</span> <span class="constant">Graph</span>::<span class="type">Location</span> <span class="variable-name">start</span>,
+                     <span class="keyword">typename</span> <span class="constant">Graph</span>::<span class="type">Location</span> <span class="variable-name">goal</span><span class="paren">)</span> <span class="minor-control-construct"><span class="paren">{</span></span>
+  <span class="keyword">typedef</span> <span class="keyword">typename</span> <span class="constant">Graph</span>::<span class="type">Location</span> <span class="type">Location</span>;
+  <span class="type">queue</span>&lt;<span class="type">Location</span>&gt; <span class="variable-name">frontier</span>;
+  frontier.push<span class="paren">(</span>start<span class="paren">)</span>;
+
+  <span class="type">unordered_map</span>&lt;<span class="type">Location</span>, <span class="type">Location</span>&gt; <span class="variable-name">came_from</span>;
+  came_from<span class="paren">[</span>start<span class="paren">]</span> = start;
+
+  <span class="keyword">while</span> <span class="paren">(</span><span class="negation-char">!</span>frontier.empty<span class="paren">())</span> <span class="minor-control-construct"><span class="paren">{</span></span>
+    <span class="keyword">auto</span> <span class="type">current</span> = frontier.front<span class="paren">()</span>;
+    frontier.pop<span class="paren">()</span>;
+
+    <span class="keyword">if</span> <span class="paren">(</span>current == goal<span class="paren">)</span> <span class="minor-control-construct"><span class="paren">{</span></span>
+      <span class="major-control-construct">break</span>;
+    <span class="minor-control-construct"><span class="paren">}</span></span>
+    
+    <span class="keyword">for</span> <span class="paren">(</span><span class="keyword">auto</span> <span class="type">next</span> : graph.neighbors<span class="paren">(</span>current<span class="paren">))</span> <span class="minor-control-construct"><span class="paren">{</span></span>
+      <span class="keyword">if</span> <span class="paren">(</span><span class="negation-char">!</span>came_from.count<span class="paren">(</span>next<span class="paren">))</span> <span class="minor-control-construct"><span class="paren">{</span></span>
+        frontier.push<span class="paren">(</span>next<span class="paren">)</span>;
+        came_from<span class="paren">[</span>next<span class="paren">]</span> = current;
+      <span class="minor-control-construct"><span class="paren">}</span></span>
+    <span class="minor-control-construct"><span class="paren">}</span></span>
+  <span class="minor-control-construct"><span class="paren">}</span></span>
+  <span class="major-control-construct">return</span> came_from;
+<span class="minor-control-construct"><span class="paren">}</span></span>
+
+<span class="type">int</span> <span class="function-name">main</span><span class="paren">()</span> <span class="minor-control-construct"><span class="paren">{</span></span>
+  <span class="type">SquareGrid</span> <span class="variable-name">grid</span> = make_diagram1<span class="paren">()</span>;
+  <span class="keyword">auto</span> <span class="type">parents</span> = breadth_first_search<span class="paren">(</span>grid, <span class="constant">SquareGrid</span>::Location<span class="minor-control-construct"><span class="paren">{</span></span><span class="constant">8</span>, <span class="constant">7</span><span class="minor-control-construct"><span class="paren">}</span></span>, <span class="constant">SquareGrid</span>::Location<span class="minor-control-construct"><span class="paren">{</span></span><span class="constant">17</span>, <span class="constant">2</span><span class="minor-control-construct"><span class="paren">}</span></span><span class="paren">)</span>;
+  draw_grid<span class="paren">(</span>grid, <span class="constant">2</span>, nullptr, &amp;parents<span class="paren">)</span>;
+<span class="minor-control-construct"><span class="paren">}</span></span>
+</pre>
+</div><pre class="example">. → → → ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ← . . . . ####. . . . . . . 
+→ → → → → ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ← ← ← . . . ####. . . . . . . 
+→ → → → → ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ← ← ← ← . . . ####. . . . . . . 
+→ → ↑ ####↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ← ← ← ← ← ← . . ####. . . . . . . 
+. ↑ ↑ ####→ ↓ ↓ ↓ ↓ ↓ ↓ ← ####↑ ← ← . . . ####. . . . . . . 
+. . ↑ ####→ → ↓ ↓ ↓ ↓ ← ← ####↑ ↑ . . . . ##########. . . . 
+. . . ####→ → → ↓ ↓ ← ← ← ####↑ . . . . . ##########. . . . 
+. . . ####→ → → * ← ← ← ← ####. . . . . . . . . . . . . . . 
+. . . ####→ → ↑ ↑ ↑ ← ← ← ####. . . . . . . . . . . . . . . 
+. . ↓ ####→ ↑ ↑ ↑ ↑ ↑ ← ← ####. . . . . . . . . . . . . . . 
+. ↓ ↓ ####↑ ↑ ↑ ↑ ↑ ↑ ↑ ← ####. . . . . . . . . . . . . . . 
+→ ↓ ↓ ####↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ####. . . . . . . . . . . . . . . 
+→ → → → → ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ####. . . . . . . . . . . . . . . 
+→ → → → ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ####. . . . . . . . . . . . . . . 
+. → → ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ####. . . . . . . . . . . . . . .
+</pre>
+</div>
+</div>
+<div id="outline-container-sec-2-3" class="outline-3"><h3 id="sec-2-3"><span class="section-number-3">2.3</span> Dijkstra’s Algorithm</h3>
+	<div class="outline-text-3" id="text-2-3">
+</div>
+<div id="outline-container-sec-2-3-1" class="outline-4"><h4 id="sec-2-3-1"><span class="section-number-4">2.3.1</span> Graph with weights</h4>
+	<div class="outline-text-4" id="text-2-3-1">
+<p>Here’s a grid with a list of forest tiles, which will have movement cost 5.</p>
+
+<div class="org-src-container"><pre class="src src-cpp"><span class="keyword">struct</span> <span class="type">GridWithWeights</span>: <span class="type">SquareGrid</span> <span class="minor-control-construct"><span class="paren">{</span></span>
+  <span class="type">unordered_set</span>&lt;Location&gt; <span class="variable-name">forests</span>;
+  <span class="function-name">GridWithWeights</span><span class="paren">(</span><span class="type">int</span> <span class="variable-name">w</span>, <span class="type">int</span> <span class="variable-name">h</span><span class="paren">)</span>: <span class="function-name">SquareGrid</span><span class="paren">(</span>w, h<span class="paren">)</span> <span class="minor-control-construct"><span class="paren">{}</span></span>
+  <span class="type">int</span> <span class="function-name">cost</span><span class="paren">(</span><span class="type">Location</span> <span class="variable-name">a</span>, <span class="type">Location</span> <span class="variable-name">b</span><span class="paren">)</span> <span class="minor-control-construct"><span class="paren">{</span></span><span class="trailing-whitespace"></span>
+    <span class="major-control-construct">return</span> forests.count<span class="paren">(</span>b<span class="paren">)</span> ? <span class="constant">5</span> : <span class="constant">1</span>;<span class="trailing-whitespace"></span>
+  <span class="minor-control-construct"><span class="paren">}</span></span>
+<span class="minor-control-construct"><span class="paren">}</span></span>;
+</pre>
+</div><pre class="example"></pre>
+</div>
+</div>
+<div id="outline-container-sec-2-3-2" class="outline-4"><h4 id="sec-2-3-2"><span class="section-number-4">2.3.2</span> Queue with priorities</h4>
+	<div class="outline-text-4" id="text-2-3-2">
+<p>We need a priority queue. C++ offers a <code>priority_queue</code> class that uses a binary heap but not the reprioritize operation. I’ll use a pair (priority, item) for the queue elements to get the right ordering. By default, the C++ priority queue returns the maximum element first, using the <code>std::less</code> comparator; we want the minimum element instead, so I’ll use the <code>std::greater</code> comparator.</p>
+
+<div class="org-src-container"><pre class="src src-cpp"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> <span class="type">T</span>, <span class="keyword">typename</span> <span class="type">Number</span>=<span class="type">int</span>&gt;
+<span class="keyword">struct</span> <span class="type">PriorityQueue</span> <span class="minor-control-construct"><span class="paren">{</span></span>
+  <span class="keyword">typedef</span> <span class="type">pair</span>&lt;<span class="type">Number</span>, <span class="type">T</span>&gt; <span class="type">PQElement</span>;
+  priority_queue&lt;PQElement, <span class="type">vector</span>&lt;<span class="type">PQElement</span>&gt;,<span class="trailing-whitespace"></span>
+                 <span class="constant">std</span>::greater&lt;PQElement&gt;&gt; elements;
+
+  <span class="keyword">inline</span> <span class="type">bool</span> <span class="function-name">empty</span><span class="paren">()</span> <span class="minor-control-construct"><span class="paren">{</span></span> <span class="major-control-construct">return</span> elements.empty<span class="paren">()</span>; <span class="minor-control-construct"><span class="paren">}</span></span>
+
+  <span class="keyword">inline</span> <span class="type">void</span> <span class="function-name">put</span><span class="paren">(</span><span class="type">T</span> <span class="variable-name">item</span>, <span class="type">Number</span> <span class="variable-name">priority</span><span class="paren">)</span> <span class="minor-control-construct"><span class="paren">{</span></span>
+    elements.emplace<span class="paren">(</span>priority, item<span class="paren">)</span>;
+  <span class="minor-control-construct"><span class="paren">}</span></span>
+
+  <span class="keyword">inline</span> <span class="type">T</span> <span class="function-name">get</span><span class="paren">()</span> <span class="minor-control-construct"><span class="paren">{</span></span>
+    <span class="type">T</span> <span class="variable-name">best_item</span> = elements.top<span class="paren">()</span>.second;
+    elements.pop<span class="paren">()</span>;
+    <span class="major-control-construct">return</span> best_item;
+  <span class="minor-control-construct"><span class="paren">}</span></span>
+<span class="minor-control-construct"><span class="paren">}</span></span>;
+</pre>
+</div><pre class="example"></pre>
+</div>
+</div>
+<div id="outline-container-sec-2-3-3" class="outline-4"><h4 id="sec-2-3-3"><span class="section-number-4">2.3.3</span> Search</h4>
+	<div class="outline-text-4" id="text-2-3-3">
+<p>See <a href="http://www.redblobgames.com/pathfinding/a-star/introduction.html#dijkstra">the forest map from the main page</a>.</p>
+
+<div class="org-src-container"><pre class="src src-cpp"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> <span class="type">Graph</span>&gt;
+<span class="type">void</span> <span class="function-name">dijkstra_search</span>
+  <span class="paren">(</span><span class="type">Graph</span> <span class="variable-name">graph</span>,
+   <span class="keyword">typename</span> <span class="constant">Graph</span>::<span class="type">Location</span> <span class="variable-name">start</span>,
+   <span class="keyword">typename</span> <span class="constant">Graph</span>::<span class="type">Location</span> <span class="variable-name">goal</span>,
+   <span class="type">unordered_map</span>&lt;<span class="keyword">typename</span> <span class="constant">Graph</span>::<span class="type">Location</span>, <span class="keyword">typename</span> <span class="constant">Graph</span>::<span class="type">Location</span>&gt;&amp; came_from,
+   <span class="type">unordered_map</span>&lt;<span class="keyword">typename</span> <span class="constant">Graph</span>::<span class="type">Location</span>, <span class="type">int</span>&gt;&amp; cost_so_far<span class="paren">)</span>
+<span class="minor-control-construct"><span class="paren">{</span></span>
+  <span class="keyword">typedef</span> <span class="keyword">typename</span> <span class="constant">Graph</span>::<span class="type">Location</span> <span class="type">Location</span>;
+  <span class="type">PriorityQueue</span>&lt;<span class="type">Location</span>&gt; <span class="variable-name">frontier</span>;
+  frontier.put<span class="paren">(</span>start, <span class="constant">0</span><span class="paren">)</span>;
+
+  came_from<span class="paren">[</span>start<span class="paren">]</span> = start;
+  cost_so_far<span class="paren">[</span>start<span class="paren">]</span> = <span class="constant">0</span>;
+  
+  <span class="keyword">while</span> <span class="paren">(</span><span class="negation-char">!</span>frontier.empty<span class="paren">())</span> <span class="minor-control-construct"><span class="paren">{</span></span>
+    <span class="keyword">auto</span> <span class="type">current</span> = frontier.get<span class="paren">()</span>;
+
+    <span class="keyword">if</span> <span class="paren">(</span>current == goal<span class="paren">)</span> <span class="minor-control-construct"><span class="paren">{</span></span>
+      <span class="major-control-construct">break</span>;
+    <span class="minor-control-construct"><span class="paren">}</span></span>
+
+    <span class="keyword">for</span> <span class="paren">(</span><span class="keyword">auto</span> <span class="type">next</span> : graph.neighbors<span class="paren">(</span>current<span class="paren">))</span> <span class="minor-control-construct"><span class="paren">{</span></span>
+      <span class="type">int</span> <span class="variable-name">new_cost</span> = cost_so_far<span class="paren">[</span>current<span class="paren">]</span> + graph.cost<span class="paren">(</span>current, next<span class="paren">)</span>;
+      <span class="keyword">if</span> <span class="paren">(</span><span class="negation-char">!</span>cost_so_far.count<span class="paren">(</span>next<span class="paren">)</span> || new_cost &lt; cost_so_far<span class="paren">[</span>next<span class="paren">])</span> <span class="minor-control-construct"><span class="paren">{</span></span>
+        cost_so_far<span class="paren">[</span>next<span class="paren">]</span> = new_cost;
+        came_from<span class="paren">[</span>next<span class="paren">]</span> = current;
+        frontier.put<span class="paren">(</span>next, new_cost<span class="paren">)</span>;
+      <span class="minor-control-construct"><span class="paren">}</span></span>
+    <span class="minor-control-construct"><span class="paren">}</span></span>
+  <span class="minor-control-construct"><span class="paren">}</span></span>
+<span class="minor-control-construct"><span class="paren">}</span></span>
+
+
+<span class="keyword">template</span>&lt;<span class="keyword">typename</span> <span class="type">Location</span>&gt;
+<span class="type">vector</span>&lt;<span class="type">Location</span>&gt; <span class="function-name">reconstruct_path</span><span class="paren">(</span>
+   <span class="type">Location</span> <span class="variable-name">start</span>,
+   <span class="type">Location</span> <span class="variable-name">goal</span>,
+   <span class="type">unordered_map</span>&lt;<span class="type">Location</span>, <span class="type">Location</span>&gt;&amp; <span class="variable-name">came_from</span>
+<span class="paren">)</span> <span class="minor-control-construct"><span class="paren">{</span></span>
+  <span class="type">vector</span>&lt;<span class="type">Location</span>&gt; <span class="variable-name">path</span>;
+  <span class="type">Location</span> <span class="variable-name">current</span> = goal;
+  path.push_back<span class="paren">(</span>current<span class="paren">)</span>;
+  <span class="keyword">while</span> <span class="paren">(</span>current != start<span class="paren">)</span> <span class="minor-control-construct"><span class="paren">{</span></span>
+    current = came_from<span class="paren">[</span>current<span class="paren">]</span>;
+    path.push_back<span class="paren">(</span>current<span class="paren">)</span>;
+  <span class="minor-control-construct"><span class="paren">}</span></span>
+  <span class="major-control-construct">return</span> path;
+<span class="minor-control-construct"><span class="paren">}</span></span>
+</pre>
+</div><pre class="example"></pre>
+<p>Let’s try it out:</p>
+
+<div class="org-src-container"><pre class="src src-cpp"><span class="preprocessor">#include</span> <span class="string">"redblobgames/pathfinding/a-star/implementation.cpp"</span>
+
+<span class="type">int</span> <span class="function-name">main</span><span class="paren">()</span> <span class="minor-control-construct"><span class="paren">{</span></span>
+  <span class="type">GridWithWeights</span> <span class="variable-name">grid</span> = make_diagram4<span class="paren">()</span>;
+  <span class="constant">SquareGrid</span>::<span class="type">Location</span> <span class="variable-name">start</span><span class="minor-control-construct"><span class="paren">{</span></span><span class="constant">1</span>, <span class="constant">4</span><span class="minor-control-construct"><span class="paren">}</span></span>;
+  <span class="constant">SquareGrid</span>::<span class="type">Location</span> <span class="variable-name">goal</span><span class="minor-control-construct"><span class="paren">{</span></span><span class="constant">8</span>, <span class="constant">5</span><span class="minor-control-construct"><span class="paren">}</span></span>;
+  <span class="type">unordered_map</span>&lt;<span class="constant">SquareGrid</span>::<span class="type">Location</span>, <span class="constant">SquareGrid</span>::<span class="type">Location</span>&gt; <span class="variable-name">came_from</span>;
+  <span class="type">unordered_map</span>&lt;<span class="constant">SquareGrid</span>::<span class="type">Location</span>, <span class="type">int</span>&gt; <span class="variable-name">cost_so_far</span>;
+  dijkstra_search<span class="paren">(</span>grid, start, goal, came_from, cost_so_far<span class="paren">)</span>;
+  draw_grid<span class="paren">(</span>grid, <span class="constant">2</span>, nullptr, &amp;came_from<span class="paren">)</span>;
+  <span class="constant">std</span>::cout &lt;&lt; <span class="constant">std</span>::endl;
+  draw_grid<span class="paren">(</span>grid, <span class="constant">3</span>, &amp;cost_so_far, nullptr<span class="paren">)</span>;
+  <span class="constant">std</span>::cout &lt;&lt; <span class="constant">std</span>::endl;
+  <span class="type">vector</span>&lt;<span class="constant">SquareGrid</span>::<span class="type">Location</span>&gt; <span class="variable-name">path</span> = reconstruct_path<span class="paren">(</span>start, goal, came_from<span class="paren">)</span>;
+  draw_grid<span class="paren">(</span>grid, <span class="constant">3</span>, nullptr, nullptr, &amp;path<span class="paren">)</span>;
+<span class="minor-control-construct"><span class="paren">}</span></span>
+</pre>
+</div><pre class="example">↓ ↓ ← ← ← ← ← ← ← ← 
+↓ ↓ ← ← ← ↑ ↑ ← ← ← 
+↓ ↓ ← ← ← ← ↑ ↑ ← ← 
+↓ ↓ ← ← ← ← ← ↑ ↑ ← 
+→ * ← ← ← ← ← → ↑ ← 
+↑ ↑ ← ← ← ← . ↓ ↑ . 
+↑ ↑ ← ← ← ← ← ↓ ← . 
+↑ ######↑ ← ↓ ↓ ← . 
+↑ ######↓ ↓ ↓ ← ← ← 
+↑ ← ← ← ← ← ← ← ← ← 
+
+5  4  5  6  7  8  9  10 11 12 
+4  3  4  5  10 13 10 11 12 13 
+3  2  3  4  9  14 15 12 13 14 
+2  1  2  3  8  13 18 17 14 15 
+1  0  1  6  11 16 21 20 15 16 
+2  1  2  7  12 17 .  21 16 .  
+3  2  3  4  9  14 19 16 17 .  
+4  #########14 19 18 15 16 .  
+5  #########15 16 13 14 15 16 
+6  7  8  9  10 11 12 13 14 15 
+
+.  @  @  @  @  @  @  .  .  .  
+.  @  .  .  .  .  @  @  .  .  
+.  @  .  .  .  .  .  @  @  .  
+.  @  .  .  .  .  .  .  @  .  
+.  @  .  .  .  .  .  .  @  .  
+.  .  .  .  .  .  .  .  @  .  
+.  .  .  .  .  .  .  .  .  .  
+.  #########.  .  .  .  .  .  
+.  #########.  .  .  .  .  .  
+.  .  .  .  .  .  .  .  .  .
+</pre>
+<p>The results are not exactly the same as the Python version because I’m using the built-in hash tables for the priority queue, and the order of iteration over hash tables is not going to be consistent.</p>
+
+</div>
+</div>
+</div>
+<div id="outline-container-sec-2-4" class="outline-3"><h3 id="sec-2-4"><span class="section-number-3">2.4</span> A* Search</h3>
+	<div class="outline-text-3" id="text-2-4">
+<p>A* is almost exactly like Dijkstra’s Algorithm, except we add in a heuristic.</p>
+
+<div class="org-src-container"><pre class="src src-cpp"><span class="keyword">inline</span> <span class="type">int</span> <span class="function-name">heuristic</span><span class="paren">(</span><span class="constant">SquareGrid</span>::<span class="type">Location</span> <span class="variable-name">a</span>, <span class="constant">SquareGrid</span>::<span class="type">Location</span> <span class="variable-name">b</span><span class="paren">)</span> <span class="minor-control-construct"><span class="paren">{</span></span>
+  <span class="type">int</span> <span class="variable-name">x1</span>, <span class="variable-name">y1</span>, <span class="variable-name">x2</span>, <span class="variable-name">y2</span>;
+  tie <span class="paren">(</span>x1, y1<span class="paren">)</span> = a;
+  tie <span class="paren">(</span>x2, y2<span class="paren">)</span> = b;
+  <span class="major-control-construct">return</span> abs<span class="paren">(</span>x1 - x2<span class="paren">)</span> + abs<span class="paren">(</span>y1 - y2<span class="paren">)</span>;
+<span class="minor-control-construct"><span class="paren">}</span></span>
+
+<span class="keyword">template</span>&lt;<span class="keyword">typename</span> <span class="type">Graph</span>&gt;
+<span class="type">void</span> <span class="function-name">a_star_search</span>
+  <span class="paren">(</span><span class="type">Graph</span> <span class="variable-name">graph</span>,
+   <span class="keyword">typename</span> <span class="constant">Graph</span>::<span class="type">Location</span> <span class="variable-name">start</span>,
+   <span class="keyword">typename</span> <span class="constant">Graph</span>::<span class="type">Location</span> <span class="variable-name">goal</span>,
+   <span class="type">unordered_map</span>&lt;<span class="keyword">typename</span> <span class="constant">Graph</span>::<span class="type">Location</span>, <span class="keyword">typename</span> <span class="constant">Graph</span>::<span class="type">Location</span>&gt;&amp; came_from,
+   <span class="type">unordered_map</span>&lt;<span class="keyword">typename</span> <span class="constant">Graph</span>::<span class="type">Location</span>, <span class="type">int</span>&gt;&amp; cost_so_far<span class="paren">)</span>
+<span class="minor-control-construct"><span class="paren">{</span></span>
+  <span class="keyword">typedef</span> <span class="keyword">typename</span> <span class="constant">Graph</span>::<span class="type">Location</span> <span class="type">Location</span>;
+  <span class="type">PriorityQueue</span>&lt;<span class="type">Location</span>&gt; <span class="variable-name">frontier</span>;
+  frontier.put<span class="paren">(</span>start, <span class="constant">0</span><span class="paren">)</span>;
+
+  came_from<span class="paren">[</span>start<span class="paren">]</span> = start;
+  cost_so_far<span class="paren">[</span>start<span class="paren">]</span> = <span class="constant">0</span>;
+  
+  <span class="keyword">while</span> <span class="paren">(</span><span class="negation-char">!</span>frontier.empty<span class="paren">())</span> <span class="minor-control-construct"><span class="paren">{</span></span>
+    <span class="keyword">auto</span> <span class="type">current</span> = frontier.get<span class="paren">()</span>;
+
+    <span class="keyword">if</span> <span class="paren">(</span>current == goal<span class="paren">)</span> <span class="minor-control-construct"><span class="paren">{</span></span>
+      <span class="major-control-construct">break</span>;
+    <span class="minor-control-construct"><span class="paren">}</span></span>
+
+    <span class="keyword">for</span> <span class="paren">(</span><span class="keyword">auto</span> <span class="type">next</span> : graph.neighbors<span class="paren">(</span>current<span class="paren">))</span> <span class="minor-control-construct"><span class="paren">{</span></span>
+      <span class="type">int</span> <span class="variable-name">new_cost</span> = cost_so_far<span class="paren">[</span>current<span class="paren">]</span> + graph.cost<span class="paren">(</span>current, next<span class="paren">)</span>;
+      <span class="keyword">if</span> <span class="paren">(</span><span class="negation-char">!</span>cost_so_far.count<span class="paren">(</span>next<span class="paren">)</span> || new_cost &lt; cost_so_far<span class="paren">[</span>next<span class="paren">])</span> <span class="minor-control-construct"><span class="paren">{</span></span>
+        cost_so_far<span class="paren">[</span>next<span class="paren">]</span> = new_cost;
+        <span class="type">int</span> <span class="variable-name">priority</span> = new_cost + heuristic<span class="paren">(</span>next, goal<span class="paren">)</span>;
+        frontier.put<span class="paren">(</span>next, priority<span class="paren">)</span>;
+        came_from<span class="paren">[</span>next<span class="paren">]</span> = current;
+      <span class="minor-control-construct"><span class="paren">}</span></span>
+    <span class="minor-control-construct"><span class="paren">}</span></span>
+  <span class="minor-control-construct"><span class="paren">}</span></span>
+<span class="minor-control-construct"><span class="paren">}</span></span>
+</pre>
+</div><pre class="example"></pre>
+<div class="org-src-container"><pre class="src src-cpp"><span class="preprocessor">#include</span> <span class="string">"redblobgames/pathfinding/a-star/implementation.cpp"</span>
+
+<span class="type">int</span> <span class="function-name">main</span><span class="paren">()</span> <span class="minor-control-construct"><span class="paren">{</span></span>
+  <span class="type">GridWithWeights</span> <span class="variable-name">grid</span> = make_diagram4<span class="paren">()</span>;
+  <span class="constant">SquareGrid</span>::<span class="type">Location</span> <span class="variable-name">start</span><span class="minor-control-construct"><span class="paren">{</span></span><span class="constant">1</span>, <span class="constant">4</span><span class="minor-control-construct"><span class="paren">}</span></span>;
+  <span class="constant">SquareGrid</span>::<span class="type">Location</span> <span class="variable-name">goal</span><span class="minor-control-construct"><span class="paren">{</span></span><span class="constant">8</span>, <span class="constant">5</span><span class="minor-control-construct"><span class="paren">}</span></span>;
+  <span class="type">unordered_map</span>&lt;<span class="constant">SquareGrid</span>::<span class="type">Location</span>, <span class="constant">SquareGrid</span>::<span class="type">Location</span>&gt; <span class="variable-name">came_from</span>;
+  <span class="type">unordered_map</span>&lt;<span class="constant">SquareGrid</span>::<span class="type">Location</span>, <span class="type">int</span>&gt; <span class="variable-name">cost_so_far</span>;
+  a_star_search<span class="paren">(</span>grid, start, goal, came_from, cost_so_far<span class="paren">)</span>;
+  draw_grid<span class="paren">(</span>grid, <span class="constant">2</span>, nullptr, &amp;came_from<span class="paren">)</span>;
+  <span class="constant">std</span>::cout &lt;&lt; <span class="constant">std</span>::endl;
+  draw_grid<span class="paren">(</span>grid, <span class="constant">3</span>, &amp;cost_so_far, nullptr<span class="paren">)</span>;
+  <span class="constant">std</span>::cout &lt;&lt; <span class="constant">std</span>::endl;
+  <span class="type">vector</span>&lt;<span class="constant">SquareGrid</span>::<span class="type">Location</span>&gt; <span class="variable-name">path</span> = reconstruct_path<span class="paren">(</span>start, goal, came_from<span class="paren">)</span>;
+  draw_grid<span class="paren">(</span>grid, <span class="constant">3</span>, nullptr, nullptr, &amp;path<span class="paren">)</span>;
+<span class="minor-control-construct"><span class="paren">}</span></span>
+</pre>
+</div><pre class="example">↓ ↓ ↓ ↓ ← ← ← ← ← ← 
+↓ ↓ ↓ ↓ ← ↑ ↑ ← ← ← 
+↓ ↓ ↓ ↓ ← ← ↑ ↑ ← ← 
+↓ ↓ ↓ ← ← ← . ↑ ↑ ← 
+→ * ← ← ← ← . → ↑ ← 
+→ ↑ ← ← ← ← . . ↑ . 
+↑ ↑ ↑ ← ← ← . . . . 
+↑ ######↑ . . . . . 
+↑ ######. . . . . . 
+↑ . . . . . . . . . 
+
+5  4  5  6  7  8  9  10 11 12 
+4  3  4  5  10 13 10 11 12 13 
+3  2  3  4  9  14 15 12 13 14 
+2  1  2  3  8  13 .  17 14 15 
+1  0  1  6  11 16 .  20 15 16 
+2  1  2  7  12 17 .  .  16 .  
+3  2  3  4  9  14 .  .  .  .  
+4  #########14 .  .  .  .  .  
+5  #########.  .  .  .  .  .  
+6  .  .  .  .  .  .  .  .  .  
+
+.  .  .  @  @  @  @  .  .  .  
+.  .  .  @  .  .  @  @  .  .  
+.  .  .  @  .  .  .  @  @  .  
+.  .  @  @  .  .  .  .  @  .  
+.  @  @  .  .  .  .  .  @  .  
+.  .  .  .  .  .  .  .  @  .  
+.  .  .  .  .  .  .  .  .  .  
+.  #########.  .  .  .  .  .  
+.  #########.  .  .  .  .  .  
+.  .  .  .  .  .  .  .  .  .
+</pre>
+</div>
+<div id="outline-container-sec-2-4-1" class="outline-4"><h4 id="sec-2-4-1"><span class="section-number-4">2.4.1</span><span class="todo TODO">TODO</span> Heuristic function should be template parameter</h4>
+	<div class="outline-text-4" id="text-2-4-1">
+<p>I should make the heuristic into a template parameter instead of being a global function.</p>
+
+</div>
+</div>
+</div>
+</div>
+<div class="h2banner"><h2 id="optimizations"><a class="anchor" href="http://www.redblobgames.com/pathfinding/a-star/implementation.html#optimizations">#</a><span class="section-number">3&nbsp; </span>Optimizations</h2>
+</div>
+<div class="topic">
+	<div class="outline-text-2" id="text-optimizations">
+<p>For the code I present here, I’ve been focusing on simplicity and generality rather than performance. <b>First make it work, then make it fast.</b> Many of the optimizations I use in real projects are specific to the project, so instead of presenting optimal code, here are some ideas to pursue for your own project:</p>
+
+</div>
+<div id="outline-container-sec-3-1" class="outline-3"><h3 id="sec-3-1"><span class="section-number-3">3.1</span> Graph</h3>
+	<div class="outline-text-3" id="text-3-1">
+<p>The biggest optimization you can make is to explore fewer nodes. My #1 recommendation is that if you’re using a grid map, <a href="http://www.redblobgames.com/pathfinding/grids/algorithms.html">consider using a non-grid</a> pathfinding graph. It’s not always feasible but it’s worth looking at.</p>
+
+<p>If your graph has a simple structure (e.g. a grid), calculate the neighbors in a function. If it’s a more complex structure (either a non-grid, or a grid with lots of walls, like a maze), store the neighbors in a data structure.</p>
+
+</div>
+</div>
+<div id="outline-container-sec-3-2" class="outline-3"><h3 id="sec-3-2"><span class="section-number-3">3.2</span> Queue</h3>
+	<div class="outline-text-3" id="text-3-2">
+<p>Breadth First Search uses a simple queue instead of the priority queue needed by the other algorithms. Queues are simpler and faster than priority queues. In exchange, the other algorithms usually explore fewer nodes. In most game maps, exploring fewer nodes is worth the slowdown from the other algorithms. There are some maps though where you don’t save much, and it might be better to use Breadth First Search.</p>
+
+<p>For queues, use a deque instead of an array. A deque allows fast insertion and removal on either end, whereas an array is fast only at one end. In Python, see <a href="https://docs.python.org/3/library/collections.html">collections.deque</a>; in C++, see the <a href="http://en.cppreference.com/w/cpp/container/deque">deque</a> container.</p>
+
+<p>For priority queues, use a binary heap instead of an array or sorted array. A binary heap allows fast insertion and removal, whereas an array is fast at one or the other but not both. In Python, see <a href="https://docs.python.org/2/library/heapq.html">heapq</a>; in C++, see the <a href="http://en.cppreference.com/w/cpp/container/priority_queue">priority_queue</a> container.</p>
+
+<p>In Python, the Queue and PriorityQueue classes I presented above are so simple that you might consider inlining the methods into the search algorithm. I don’t know if this buys you much; I need to measure it. The C++ versions are going to be inlined.</p>
+
+<p>In Dijkstra’s Algorithm, note that the priority queue’s priority is stored twice, once in the priority queue and once in <code>cost_so_far</code>, so you could write a priority queue that gets priorities from elsewhere. I’m not sure if it’s worth it.</p>
+
+<p>The standard way Dijkstra’s Algorithm is presented uses a reprioritizing priority queue. However, what happens if you don’t reprioritize? You’ll end up with duplicate elements in there. <i>The algorithm still works.</i> You’ll revisit some locations more than you need to. The priority queue will have more elements than necessary, which slows it down, but the data structures that support reprioritization also slow down by having more elements. See the paper <a href="http://www.cs.sunysb.edu/~rezaul/papers/TR-07-54.pdf">“Priority Queues and Dijkstra’s Algorithm”</a> by Chen, Chowdhury, Ramachandran, Lan Roche, Tong. That paper also suggests looking at <a href="http://en.wikipedia.org/wiki/Pairing_heap">pairing heaps</a> and other data structures.</p>
+
+<p>If you’re considering using something other than a binary heap, first measure the size of your frontier and how often you reprioritize. Profile the code and see if the priority queue is the bottleneck.</p>
+
+<p>My gut feeling is that <i>bucketing</i> is promising. Just as bucket sort and radix sort can be useful alternatives to quicksort when the keys are integers, we have an even better situation with Dijkstra’s Algorithm and A*. The priorities in Dijkstra’s Algorithm are <i>incredibly narrow</i>. If the lowest element in the queue has priority <code>f</code>, then the highest element has priority <code>f+e</code> where <code>e</code> is the maximum edge weight. In the forest example, I have edge weights 1 and 5. That means all the priorities in the queue are going to be between <code>f</code> and <code>f+5</code>. Since they’re all integers, <i>there are only six different priorities</i>. We could use six buckets and not sort anything at all! A* produces a wider range of priorities but it’s still worth looking at. And there are fancier bucketing approaches that handle a wider range of situations.</p>
+
+<p><a href="http://theory.stanford.edu/~amitp/GameProgramming/ImplementationNotes.html#set-representation">I have more note about priority queue data structures here</a>.</p>
+
+</div>
+</div>
+<div id="outline-container-sec-3-3" class="outline-3"><h3 id="sec-3-3"><span class="section-number-3">3.3</span> Search</h3>
+	<div class="outline-text-3" id="text-3-3">
+<p>The heuristic adds complexity and cpu time. The goal though is to explore fewer nodes. In some maps (such as mazes), the heuristic may not add much information, and it may be better to use a simpler algorithm without a heuristic guide.</p>
+
+<p>If your graph uses integers as locations, consider using a simple array instead of a hash table for <code>cost_so_far</code>, <code>visited</code>, <code>came_from</code>, etc. Since <code>visited</code> is an array of booleans, you can use a bit vector. Initialize the bit vector for all ids, but leave <code>cost_so_far</code> and <code>came_from</code> uninitialized (if your language allows). Then only initialize on the first visit.</p>
+
+<p>If you run only one search at a time, you can statically allocate and then reuse data structures from one invocation to the next. Instead of initializing them on entry, reset them on exit. You can use an array to keep track of which locations were modified, then reset only those. For example, if you’re using a <code>visited[]</code> array initialized for 1000 nodes, but most searches visit fewer than 100 nodes, then you can keep an array of indices modified, and then reset only those 100 nodes on exiting the function instead of re-initializing all 1000 nodes when you enter the function.</p>
+
+<p>Some people use an <i>inadmissible</i> (overestimating) heuristic to speed up A* search. This seems reasonable. I haven’t looked closely into its implications though. I believe (but don’t know for sure) that some already-visited elements may need to be visited again even after they’ve been taken out of the frontier.</p>
+
+</div>
+</div>
+</div>
+<div class="h2banner"><h2 id="more"><a class="anchor" href="http://www.redblobgames.com/pathfinding/a-star/implementation.html#more">#</a><span class="section-number">4&nbsp; </span>More reading</h2>
+</div>
+<div class="topic">
+	<div class="outline-text-2" id="text-more"><ul class="org-ul">
+<li>Algorithms textbooks often use mathematical notation with single-letter variable names. In these pages I’ve tried to use more descriptive variable names. Correspondences: <ul class="org-ul">
+	<li><code>cost</code> is sometimes written as <i>w</i> or <i>d</i> or <i>l</i> or length</li>
+<li><code>cost_so_far</code> is usually written as <i>g</i> or <i>d</i> or distance</li>
+<li><code>heuristic</code> is usually written as <i>h</i></li>
+<li>In A*, the <code>priority</code> is usually written as <i>f</i>, where <i>f</i> = <i>g</i> + <i>h</i></li>
+<li><code>came_from</code> is sometimes written as <i>π</i> or parent or previous or prev</li>
+<li><code>frontier</code> is usually called OPEN</li>
+<li><code>visited</code> is the union of OPEN and CLOSED</li>
+<li>locations such as <code>current</code> and <code>next</code> are written with letters <i>u</i>, <i>v</i></li></ul></li>
+<li>Wikipedia links: <ul class="org-ul">
+	<li><a href="http://en.wikipedia.org/wiki/Queue_%2528abstract_data_type%2529">Queue</a></li>
+<li><a href="http://en.wikipedia.org/wiki/Graph_%2528data_structure%2529">Graph</a></li>
+<li><a href="http://en.wikipedia.org/wiki/Breadth-first_search">Breadth-First Search</a></li>
+<li>(Greedy) <a href="http://en.wikipedia.org/wiki/Best-first_search">Best-First Search</a></li>
+<li><a href="http://en.wikipedia.org/wiki/Dijkstra%2527s_algorithm">Dijkstra’s Algorithm</a></li>
+<li><a href="http://en.wikipedia.org/wiki/A*_search_algorithm">A* Algorithm</a></li></ul></li></ul>
+</div>
+</div>
+</div>
+<div class="divider">
+</div>
+<div class="divider-disqus" style="font-size:large">
+            Email me at
+            
+            <a class="email" href="mailto:redblobgames@gmail.com">redblobgames@gmail.com</a>,
+                or tweet to <a href="http://twitter.com/redblobgames">@redblobgames</a>,
+              
+            or post a public comment:
+          
+          </div>
+          <div class="comments" role="complementary">
+          	<div id="disqus_thread" class="main"><iframe id="dsq-2" data-disqus-uid="2" allowtransparency="true" frameborder="0" scrolling="no" tabindex="0" title="Disqus" width="100%" src="./Implementations_files/saved_resource.html" style="width: 100% !important; border: none !important; overflow: hidden !important; height: 589px !important;" horizontalscrolling="no" verticalscrolling="no"></iframe>
+          </div><script>
+              (function() {
+              var dsq = document.createElement('script');
+              dsq.type = 'text/javascript'; dsq.async = true;
+              
+                  dsq.src = 'http://redblobgames.disqus.com/embed.js';
+                
+              if (document.location.hostname != 'localhost') (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+              })();
+            </script><noscript>&lt;a href="http://redblobgames.disqus.com/?url=ref"&gt;View the discussion thread.&lt;/a&gt;</noscript>
+        </div>
+        <div class="footer" role="contentinfo">
+        	<div style="float:left;width:300px;margin-right:40px"><address>
+		  Copyright © 2014
+                  <a rel="author home copyright" href="http://www.redblobgames.com/">Red Blob Games</a></address>
+              </div>
+              <div style="text-align:right">
+	    &nbsp;Created July 2014 with <a href="http://orgmode.org/">Emacs Org-mode</a>, from <a href="http://www.redblobgames.com/pathfinding/a-star/introduction.org">implementation.org</a>.<!-- hhmts start -->Last modified: 24 Aug 2014<!-- hhmts end -->
+	    </div><br style="clear:both"><!-- Start of counters --><script><!--
+                  var sc_project=417499;
+                  var sc_invisible=1;
+                  var sc_security="";
+(function() {
+      var script = document.createElement('script');
+      script.type = 'text/javascript'; script.async = true;
+      script.src = 'http://statcounter.com/counter/counter_xhtml.js';
+      if (document.location.hostname != 'localhost') document.getElementsByTagName('body')[0].appendChild(script);
+  })();
+                //--></script><noscript>&lt;div class="statcounter"&gt;&lt;a class="statcounter" href="http://statcounter.com/"&gt;&lt;img class="statcounter" src="http://c.statcounter.com/417499/0//1/" alt=""&gt;&lt;/a&gt;&lt;/div&gt;</noscript><script>
+var _gap = _gap || [];
+_gap.push(['_setAccount', 'UA-79181-1']);
+_gap.push(['_setDomainName', 'redblobgames.com']);
+_gap.push(['_setAllowLinker', true]);
+_gap.push(['_trackPageview']);
+_gap.push(['_gapTrackBounceViaTime', 30]);
+_gap.push(['_gapTrackBounceViaScroll', 25]);
+_gap.push(['_gapTrackReads', 60, 10]);
+_gap.push(['_gapTrackLinkClicks']);
+(function() {
+    var gap = document.createElement('script');
+    gap.async = true;
+    gap.type = 'text/javascript';
+    gap.src = '/js/gap.min.js';
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gap, s);
+})();
+              </script><!-- End of counters -->
+          </div><script type="text/javascript" async="" src="./Implementations_files/counter_xhtml.js"></script>
+
+<div id="window-resizer-tooltip" style="display: block;"><a href="http://www.redblobgames.com/pathfinding/a-star/implementation.html#" title="Edit settings" style="background-image: url(chrome-extension://kkelicaakdanhinjdeammmilcgefonfh/images/icon_19.png);"></a><span class="tooltipTitle">Window size: </span><span class="tooltipWidth" id="winWidth">1862</span> x <span class="tooltipHeight" id="winHeight">1058</span><br><span class="tooltipTitle">Viewport size: </span><span class="tooltipWidth" id="vpWidth">1862</span> x <span class="tooltipHeight" id="vpHeight">942</span>
+</div></body></html>

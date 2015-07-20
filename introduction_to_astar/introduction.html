@@ -1,0 +1,321 @@
+
+<!DOCTYPE html><html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Introduction to A*</title><link rel="canonical" href="http://www.redblobgames.com/pathfinding/a-star/introduction.html"><link rel="shortcut icon" href="http://www-cs-students.stanford.edu/~amitp/favicon.ico"><link rel="alternate" type="application/atom+xml" title="Blobs in Games - Atom" href="http://simblob.blogspot.com/feeds/posts/default"><meta name="verify-v1" content="82b+h1+tgwLrcTqTiJrqquMvoFVBwMwY11dx63m01zk="><meta name="robots" content="noodp"><meta name="viewport" content="width=640, maximum-scale=1.0"><link rel="apple-touch-icon" href="http://www-cs-students.stanford.edu/~amitp/red_blob.gif"><link href="http://fonts.googleapis.com/css?family=Source+Code+Pro:400,700%7CSource+Sans+Pro:400,400italic,700italic,700" rel="stylesheet" type="text/css"><style>
+              body{font-family:"Source Sans Pro", "Open Sans", "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", "Tahoma", sans-serif;font-size:14px;line-height:1.5;min-height:95%}body.width600{font-size:16px}tt,code,kbd,samp,pre{font-family:"Source Code Pro", monospace, serif, "Segoe UI Symbol", "Symbol";font-size:12px;font-size-adjust:none}.width600 tt,.width600 code,.width600 kbd,.width600 samp,.width600 pre{font-size:14px}nav{font-size:14px}header,h2{text-shadow:0px 2px 5px rgba(0,0,0,0.8);-moz-font-feature-settings:"liga=1,pnum=1,onum=1,kern=1";-ms-font-feature-settings:"liga" 1, "pnum" 1, "onum" 1, "kern" 1}h1{font-size:28px}h1 .subheading{letter-spacing:normal;font-size:14px}.width600 h1{font-size:32px}.width600 h1 .subheading{font-size:16px}sup,sub{position:relative;vertical-align:baseline;font-size:75%;line-height:0;padding-left:2px}sup{top:-0.5em}sub{bottom:-0.25em}*{-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box}html,body{margin:0;padding:0}body{background-color:#fff;color:#333}.main{max-width:1075px;margin-left:auto;margin-right:auto;padding:0 40px}header{display:block;text-align:center}h1{margin:0;padding:28px;padding-left:80px;text-align:left}header,.footer,.divider,h2{color:#fff;background-color:#bf4040;background-image:url(http://theory.stanford.edu/~amitp/transparent-blob.png),url(http://theory.stanford.edu/~amitp/transparent-blob.png);background-position:0 0, 16px 16px;-webkit-font-smoothing:antialiased}header a,.footer a,.divider a,h2 a{color:#f8ebeb}.comments,.divider-disqus{background-color:#e4e4e0}.comments{padding-bottom:20px;text-shadow:1px 1px 3px #fff}h2{margin:20px 0;padding:10px 40px;font-size:20px;max-width:530px}.width600 h2{max-width:680px}h2 a.anchor{float:right;width:2em;text-align:right;color:#bf4040}h2:hover a.anchor{color:#df9f9f}h3{margin:18px 0;font-size:18px}nav{display:block}nav ul{text-align:center;line-height:1.0;margin:0}nav ul li{display:inline-block;padding:2px 5px;text-align:center;width:10%;white-space:nowrap}nav ul li a{display:block;width:100%;font-weight:bold;text-decoration:none}nav ul li.nav:hover{background-color:rgba(0,0,0,0.5);font-weight:bold}nav ul li.navself{background-color:rgba(0,0,0,0.3);font-weight:bold}.topic{margin-left:40px;margin-right:40px;margin-bottom:35px;max-width:450px}.width600 .topic{max-width:600px}header,.divider,h2{border-bottom:1px solid #000}.divider,.footer,h2{border-top:1px solid #000}.divider{min-height:28px}.divider-disqus{padding-top:14px;text-align:center}.footer{clear:both;padding:7px 14px;border-top:1px solid #000}h2:target{-webkit-animation:target-attention 0.4s 1;-moz-animation:target-attention 0.4s 1}@-webkit-keyframes target-attention{0%{-webkit-transform:scale(1.1);transform:scale(1.1)}100%{-webkit-transform:scale(1);transform:scale(1.1)}}@-moz-keyframes target-attention{0%{-moz-transform:scale(1.1);transform:scale(1.1)}100%{-moz-transform:scale(1);transform:scale(1)}}h2:target{font-size:24px}div:target{border:1px dashed #888}kbd kbd{padding:1px 7px;margin:0px 1px 3px 1px;display:inline-block;font-size:11px;font-family:"Helvetica Neue", "Helvetica", "Tahoma", "Arial", sans-serif;white-space:nowrap;background:#ddd;color:#242;border:1px solid rgba(0,0,0,0.2);border-radius:3px;box-shadow:inset 0 0 1px 1px #fff,0 2px 0 rgba(0,0,0,0.3)}samp,kbd{background-color:#f4f4f0}code,samp{color:#442}kbd{margin:0 7px;color:#252}.topic>img{max-width:100%;-ms-interpolation-mode:bicubic}.topic figcaption{font-size:12px;text-align:center}a{color:#bf4040;text-decoration:none}a:hover{text-decoration:underline}.topic p,.topic li{text-align:justify;-webkit-hyphens:auto;-moz-hyphens:auto;hyphens:auto}nav,figure,abbr,acronym,code,kbd,samp,tt,var,pre{-webkit-hyphens:none;-moz-hyphens:none;hyphens:none}p,ul,ol,ul.spaced>li,ol.spaced>li{margin:1.25em 0}ul ul,ul ol,ol ul,ol ol,li ul,li ol{margin:0}ul,ol{margin-left:0;padding-left:21px}dt{font-weight:bold}pre{max-width:450px;line-height:1.4;font-size:12px;padding:4px 12px;resize:both;overflow:auto;white-space:pre-wrap;border-top:1px solid #ccc;border-bottom:1px solid #ccc;border-left-width:0;border-right-width:0}.width600 pre{max-width:600px}.width600 pre{font-size:14px}pre::-webkit-scrollbar{height:1em}pre::-webkit-scrollbar-thumb:horizontal{border-radius:0.5em;background:rgba(0,0,0,0.4)}ul pre,ol pre{width:450px}pre.simple,.comments pre{overflow:visible;width:100%;border:none;background:transparent;background-color:transparent;box-shadow:none}pre.snippet,pre.src{border-top-style:dashed;border-bottom-style:dashed}.topic>pre:only-child{padding-bottom:14px;border-bottom:1px solid rgba(0,0,0,0.5)}blockquote{font-style:italic}table.standard{border:1px solid rgba(0,0,0,0.5);border-collapse:collapse}table.standard th{background-color:#f8f8f8;background:linear-gradient(top, #f8f8f8,#f8f8f8,#f0f0f0)}table.standard td{background-color:#fff}table.standard th,table.standard td{border:1px solid rgba(0,0,0,0.5)}svg{overflow:hidden}tt,code{padding:0 2px}address{max-width:450px;text-align:right}.footer address{text-align:left}@media only screen and (max-width: 700px){.main{padding:0 10px}.topic{margin-left:10px;margin-right:10px}h2{max-width:400px}pre{font-size:10px}nav{font-size:12px}}@media only screen and (max-width: 600px){header,.footer{font-size:12px}h1{text-align:center;font-size:14px;padding:14px}nav span.longnav,nav form{display:none}nav ul li{width:15%}.omit-if-narrow,nav ul li.omit-if-narrow{display:none}pre{width:auto;font-size:9px}nav{font-size:10px}}form{margin:0}input[type="text"]{max-width:100%;border:1px solid rgba(0,0,0,0.7);background-color:#f8f8f4;color:#000;text-align:center;font-weight:bold}input[type="text"]:focus{background-color:#fffff4}input::-webkit-input-placeholder{color:#aaa}input::-moz-placeholder{color:#aaa}.TODO{color:red;border:2px solid white}pre.src .comment-delimiter,pre.src .nxml-comment-delimiter{color:#4488ff}pre.src .comment,pre.src .nxml-comment-content{color:#006699}pre.src .keyword{color:#406abf;font-weight:bold}pre.src .builtin{color:#508b20}pre.src .warning{color:#cc0000}pre.src .function-name{color:#268bd2;font-weight:bold}pre.src .variable-name{color:#00008b}pre.src .type{color:#6c71c4}pre.src .constant-face{color:#d33682}pre.src .doc{color:#666666;background-color:#e2e6e8}pre.src .string{color:#888888}pre.src .preprocessor{color:#859900}pre.src .negation-char,pre.src .sh-escaped-newline{color:#ff0000}pre.src .todo{color:#ffffff;background:#dc322f}pre.src .note{color:#ffffff;background:#2aa198}pre.src .hack{color:#ffffff;background:#859900}pre.src .paren{color:#a0a090;font-weight:bold}pre.src .minor-control-construct{color:#268bd2}pre.src .major-control-construct{color:#ff0000}pre.src-emacs-lisp .paren{color:#c9c9c4}pre.src-sh .string,pre.src-sh .comment{color:inherit}pre.src-python .highlight-indentation{border-right:2px solid #eeeeee}pre.src-xml .nxml-element-local-name{color:#406abf;font-weight:normal}pre.src-xml .nxml-tag-delimiter,pre.src-xml .nxml-tag-slash{color:#9cabc9;font-weight:bold}table.standard td.left,table.standard th.left{text-align:left}table.standard td.center,table.standard th.center{text-align:center}table.standard td.right,table.standard th.right{text-align:right}@media print{body{font-family:"Book Antiqua", "Times New Roman", serif;font-size:12pt;line-height:1.25}h1,h2,h3,h4,h5,h6,.footer,.divider-disqus{font-family:"Helvetica", sans-serif;font-size:12pt;text-rendering:optimizeLegibility}h1{font-size:18pt}h1 .subheading{font-size:12pt}header,h2{text-shadow:none}tt,code,kbd,samp,pre{font-family:"Courier", "Courier New", monospace;font-size:12pt}nav,.comments{display:none}}
+
+            
+    todo { display: block; border: 1px solid hsl(60,90%,83%); background: hsl(60,90%,85%); padding: 0.5em 1em; margin: 0.5em 1em; box-shadow: 0 6px 2px -3px hsla(0, 0%, 0%, 0.5), 0 0 4px -2px hsla(0, 0%, 0%, 0.5); }
+    
+    svg { pointer-events: none; }
+    g.base .tile { pointer-events: visible; cursor: pointer; }
+    g.frontier .frontier { fill: hsl(220, 50%, 50%); }
+    
+    path.parent { fill: none; stroke: hsl(30, 20%, 65%); stroke-width: 3px; }
+    #arrowhead { fill: hsl(30, 20%, 65%); }
+
+    path.path-trace { fill: none; stroke: hsl(30, 5%, 90%); stroke-width: 11px; }
+
+    g.heuristic_distance .heuristic { fill: none; stroke: hsl(330, 50%, 50%); stroke-width: 4px; }
+    
+    path.contour { fill: none; stroke-width: 1px; }
+    
+    .draggable { pointer-events: visible; cursor: move /* IE */; cursor: grab; }
+    .draggable.dragging { cursor: grabbing; }
+    path.start { fill: hsl(0, 50%, 50%); stroke: none; }
+    path.goal { fill: none; stroke: hsl(310, 50%, 50%); stroke-width: 7px; }
+
+    g.base .tile { fill: hsl(0, 10%, 85%); }
+    g.base .visited { fill: hsl(30, 20%, 75%); }
+    g.base .weight-Infinity { fill: hsl(60, 5%, 50%); stroke: hsl(60, 5%, 50%); stroke-width: 1.5px; }
+    g.base .weight-5 { fill: hsl(110, 20%, 60%); }
+    .color-frontier g.base .frontier,
+    .color-frontier g.base .current { fill: hsl(220, 50%, 60%); }
+    .color-current g.base .current { fill: hsl(70, 70%, 70%); }
+
+    #diagram-early-exit-false g.numeric_label_cost_so_far text.label,
+    #diagram-early-exit-true g.numeric_label_cost_so_far text.label
+    { fill: hsl(0, 10%, 40%); }
+
+    #diagram-nongrid .tile { fill: hsl(0, 0%, 100%); stroke: hsl(30, 20%, 75%); stroke-width: 1px; }
+    #diagram-nongrid { background-color: hsl(30, 10%, 75%); border-top: 6px solid hsl(30, 10%, 75%); border-left: 10px solid hsl(30, 10%, 75%); }
+
+    #diagram_top g.base .visited { fill: hsl(0, 10%, 95%); }
+    #diagram_top g.base .weight-2 { fill: hsl(110, 40%, 80%); stroke: hsl(110, 40%, 80%); stroke-width: 0.5px; }
+    #diagram_top g.base .weight-3 { fill: hsl(60, 50%, 80%); stroke: hsl(60, 50%, 80%); stroke-width: 0.5px; }
+    #diagram_top g.base .weight-Infinity { fill: hsl(110, 20%, 60%); stroke: hsl(110, 20%, 60%); }
+    #diagram_top g.base .weight-20 { fill: hsl(200, 50%, 70%); stroke: hsl(200, 50%, 70%); stroke-width: 0.5px; }
+    #diagram_top .path-trace { stroke: hsl(280, 30%, 70%); stroke-width: 5px; }
+        
+    #diagram1 .play_pause { display: none; }
+    #diagram1 .label { fill: hsl(0, 10%, 80%); }
+
+    #diagram2 .path-trace,
+    #diagram-astar-1 g.cost_so_far .path-trace,
+    #diagram-astar-3 g.cost_so_far .path-trace
+    { stroke: hsl(280, 50%, 50%); stroke-width: 4px; }
+    
+    #diagram-contour-comparison .combined path.path-trace,
+    #diagram-astar-3 path.path-trace { stroke-width: 20px; }
+
+    #diagram-contour-comparison path.goal,
+    #diagram-astar-1 path.goal,
+    #diagram-astar-2 path.goal
+    { stroke-width: 6px; }
+    
+    #diagram-weights-false path.goal,
+    #diagram-weights-true path.goal
+    { stroke-width: 8px; }
+    
+    #diagram-nongrid path.goal,
+    #diagram-contour-comparison .combined path.goal,
+    #diagram-astar-3 path.goal
+    { stroke-width: 10px; }
+    
+    .slider button { font-size: large; }
+    
+    pre em { font-weight: inherit; font-style: inherit; background-color: #ffc; padding: 2px 0; }
+    .frontier { color: hsl(220, 50%, 50%); }
+    .start { color: hsl(0, 50%, 50%); }
+    .current { color: hsl(70, 100%, 30%); }
+    .visited, .came_from { color: hsl(30, 40%, 40%); }
+    .next { color: hsl(150, 40%, 40%); }
+    .goal { color: hsl(310, 50%, 50%); }
+    .path { color: hsl(280, 50%, 50%); }
+    .cost_so_far, .new_cost { color: hsl(340, 30%, 40%); }
+    .frontier, .start, .current, .visited, .came_from, .next, .goal, .path, .cost_so_far, .new_cost { font-weight: bold; }
+  </style></head><body class="gameprog width600"><header><h1 role="banner">Introduction to A*
+  <div class="subheading">
+      </header>
+      
+      <div class="main" role="main">
+        
+        <div class="topic">
+            <p>Часто в играх нам требуется найти кратчайший путь из одной точки в другую, при этом учитывая не только дистанцию, но и время, которое может потребоваться для ее преодоления. На этой карте вода значительно замедляет передвижение, поэтому при составлении маршрута, желательно избегать пересечения водных преград. Перед вами интерактивная диаграмма. Кликайте по клеточкам, чтобы задать им значение: пол, трава, песок, вода или дерево/стена. Передвигайте звездочку (старт) и крестик (финиш), диаграмма покажет кратчайший путь.</p>
+            
+            <div id="diagram_top"></div>
+            <p>Как же работает расчет таких маршрутов? В данном случае использован алгоритм<strong>A*</strong> (A-star)&nbsp;&mdash; в общем-то, самый популярный сегодня алгоритм поиска пути. Он относится к некоему &laquo;семейству&raquo; алгоритмов, которые представляют карту в виде <em>графа</em>, и определенным образом обходят все его узлы, чтобы найти кратчайшие пути между ними. Если вы никогда не сталкивались с графами, можете начать знакомство с ними <a href="http://www.redblobgames.com/pathfinding/grids/graphs.html">с моей ознакомительной статьи</a>. В кратце, здесь в виде графа мы будем представлять ячейки нашей карты (вершины)и переходы между ними (ребра). Прежде чем перейти к разбору алгоритма A*, изучим более простой подход&nbsp;&mdash; <strong>алгоритм поиска &laquo;лучший-первый&raquo;</strong> (Best First Search, BFS).</p>
+            <p>Ключевая идея этого алгоритма заклчается в том, что мы следим за разрастанимем кольцевой <em class="frontier">границы</em> (frontier) и считаем, как эта граница &laquo;обтекает&raquo; препятствия. <strong>Запустите анимацию</strong> и посмотрите, как это работает:</p>
+            
+            <div id="diagram0a" class="color-frontier"></div><p>Эту расширяющуюся границу можно также представить в виде линий-контуров, прерывающихся возле стен, подобно воде, затопляющей нашу карту. Именно из-за такой иллюстрации этот алгоритм также иногда называют &laquo;волновым&raquo;:</p>
+            
+            <div id="diagram0b"></div>
+            <p>Как же это реализовано? Алгоритм довольно прост, просто повторяйте следующие шаги по порядку, пока граница не исчезнет:</p>
+            <ol><li>Выберите и удалите <span class="current">клеточку</span> из <span class="frontier">границы</span>.</li>
+                <li>Пометьте удаленную клеточку как <span class="visited">посещенную</span> чтобы больше не включать ее в границу и не обходить дважды.</li>
+                <li><em>Расширьте</em> границу, добавив в нее <span class="next">соседей</span> удаленной клеточки, кроме тех, что уже помеченные как <span class="visited">посещенные</span>.</li>
+            </ol>
+            <p>Рассмотрим поближе. На этой диаграмме клеточки нумеруются в том порядке, в котором мы их обходм. <strong>Рассмотрите распространение &laquo;волны&raquo; шаг за шагом:</strong></p>
+            <div id="diagram1" class="color-frontier color-current"></div>
+            <p>На языке Python проход волны умещается в 10 строк:</p>
+            <pre>
+frontier = Queue()
+frontier.put(start)
+visited = {}
+visited[start] = True
+
+while not frontier.empty():
+   current = frontier.get()
+   for next in graph.neighbors(current):
+      if next not in visited:
+         frontier.put(next)
+         visited[next] = True
+            </pre>
+            <p>Этот вложенный цикл&nbsp;&mdash; суть и &laquo;соль&raquo; всех поисковых алгоритмов, изложенных в этой статье, включая A*. Но он не создает маршрутов - только указывает нам, как посетить каждое поле на карте. Так как же нам найти кратчайший путь между двумя клеточками? На самом деле волновой алгоритм можно использовать не только для поиска путей, в <a href="../tower-defense/">этой статье</a> я использовал его в содании простой игры в жанре Tower Defense, но его также используют для построения карт дальностей, процедурной генерации уровней, и многого другого. Однако сейчас нам нужно искать пути, поэтому давайте немного модифицируем наш цикл так, чтобы запоминать в каждой посещенной клеточке, <em>откуда мы в нее пришли</em>. Переименуем <code class="visited">visited</code> (посещенная) в <code class="came_from">came_from</code> (откуда пришли):</p>
+            <pre>
+frontier = Queue()
+frontier.put(start)
+<em>came_from</em> = {}
+<em>came_from</em>[start] = <em>None</em>
+
+while not frontier.empty():
+   current = frontier.get()
+   for next in graph.neighbors(current):
+      if next not in <em>came_from</em>:
+         frontier.put(next)
+         <em>came_from</em>[next] = <em>current</em>
+            </pre>
+            <p>Теперь массив <span class="came_from">came_from</span> для каждой клеточки нашей карты возвращает клеточку, к ней ведущую, и этого уже вполне достаточно, чтобы проследить маршрут от любого места в то, с которого начинался обход. Наведите курсор мыши на любую клетку, чтобы увидеть как по обратным стрелочкам строится маршрут к началу обхода.</p>
+         
+            <div id="diagram2"></div><p>Код, высчитывающий этот путь, довольно прост:</p>
+            <pre>
+current = goal
+path = [current]
+while current != start:
+   current = came_from[current]
+   path.append(current)
+            </pre>
+            <p>Это простейший из алгоритмов поиска пути, который работает не только в картах-сетках, как здесь, но и в любой структуре, которую можно представить в виде графа. Например, в дандже узлы графа могут представлять комнаты, а ребра&nbsp;&mdash; проходы между ними. В платформере, узлы&nbsp;&mdash; это места на карте, а ребра&nbsp;&mdash; действия, которые необходиы для их достижения: шаг вправо, прыжок влево, и так далее. Проще говоря, представьте себе, что узел графа&nbsp;&mdash; это некое состояние, а ребра&nbsp;&mdash; способы достижения этого состояния. Больше о представлении игровых пространств можно почитать <a href="http://theory.stanford.edu/~amitp/GameProgramming/MapRepresentations.html">здесь</a>, а дальше я покажу, как и зачем может пригодиться поиск &laquo;лучший-первый&raquo; на примере карт-сеток.</p>
+            </div>
+            <div class="h2banner"><h2 id="early-exit"><a class="anchor" href="#early-exit">#</a>Ранний выход</h2></div>
+            <div class="topic"><p>Мы сумели найти путь из <em>одной</em> точки на карте <em>во все</em> остальные, однако часто нам не требуется знать так много: нужен лишь маршрут к какой-то <em>одной</em> определенной точке. Для этого обход &laquo;волны&raquo; можно остановить сразу, как только мы нашли нужное нам место. Перемещайте <span class="goal">крестик</span>, чтобы посмотреть как граница обхода увеличивается и уменьшается соответственно.</p>
+   
+            <div style="text-align:center">
+                <div id="diagram-early-exit-false" style="display:inline-block;margin-right:25px">Без раннего выхода<br></div>
+                <div id="diagram-early-exit-true" style="display:inline-block">С ранним выходом<br></div>
+            </div>
+            <p>Это достигается добавлением в код двух простых строчек:</p>
+            <pre>
+frontier = Queue()
+frontier.put(start)
+came_from = {}
+came_from[start] = None
+
+while not frontier.empty():
+   current = frontier.get()
+
+   <em>if current == goal:</em>
+   <em>   break           </em>
+
+   for next in graph.neighbors(current):
+      if next not in came_from:
+         frontier.put(next)
+         came_from[next] = current
+            </pre>
+        </div>
+        <div class="h2banner"><h2 id="dijkstra"><a class="anchor" href="#dijkstra">#</a>Цена шага</h2></div>
+        <div class="topic">
+            <p>До сих пор мы предполагали, что все переходы между свободными клеточками на поле одинаковы, однако иногда нам требуется назначить каким-то переходам некотурую &laquo;цену&raquo;. Например, в игре &laquo;Цивилизация&raquo; (Sid Meyer's Civilization), один шаг по равнине или пустыне может стоить 1 очко перемещения, но движение через лес или холмы будет забирать до 5 очков за шаг. На карте в начале статьи движение через воду обходится в 10 раз дороже движения по траве. Еще один пример: переход между клеточками по диагонали может стоить дороже простого шага на соседнюю клетку. Было бы здорово научить наш алгоритм учитывать такие вещи. Давайте сравним <em>число шагов</em> от начала до цели с <em>дистанцией</em>:</p>
+         
+            <div style="text-align:center">
+                <div id="diagram-weights-false" style="display:inline-block;margin-right:28px">Число шагов<br></div>
+                <div id="diagram-weights-true" style="display:inline-block">Дистанция<br></div>
+            </div>
+            <p>Для нахождения маршрута с учетом дистанции нам нужен <strong>алгоритм Дейкстры</strong>. Чем же он отличается от поиска &laquo;лучший-первый&raquo;? Поскольку нам надо учитывать стоимость перемещения, давайте заведем для этого новую переменную, <span class="cost_so_far">cost_so_far</span>&nbsp;&mdash; она будет хранить стоимость пройденного маршрута от самого начала обхода. Поскольку стоимость пути теперь учитывается при продвижении клеточек по очереди (Queue), теперь мы будем использовать очередь с приоритетом (PriorityQueue). Здесь скрывается еще одна проблема: мы можем посетить одну и ту же клеточку дважды за один проход, с разными значениями стоимости пути, так что придется немного изменить логику обхода. Вместо того, чтобы добавлять в границу обхода новую клеточку, опираясь исключительно на то, посещали ли мы ее раньше или нет, мы будем добавлять ее также и тогда, когда новый путь к этой клеточке лучше просчитанного ранее.</p>
+            <pre>
+frontier = <em>PriorityQueue()</em>
+frontier.put(start<em>, 0</em>)
+came_from = {}
+cost_so_far = {}
+came_from[start] = None
+cost_so_far[start] = 0
+
+while not frontier.empty():
+   current = frontier.get()
+
+   for next in graph.neighbors(current):
+      <em>new_cost = cost_so_far[current] + graph.cost(current, next)</em>
+      <em>if next not in cost_so_far or new_cost &lt; cost_so_far[next]:</em>
+         cost_so_far[next] = <em>new_cost</em>
+         <em>priority = new_cost</em>
+         frontier.put(next<em>, priority</em>)
+         came_from[next] = current</pre>
+         <p>Использование очереди с приоритетом вместо обычной <em>меняет то, каким образом растет граница обхода</em>. <strong>Запустите анимацию</strong> ниже и посмотрите, как волна обходит лес в центре карты значительно медленнее, ища наиболее легкий путь, вместо того, чтобы идти напрямую через него:</p>
+         
+         <div id="diagram-dijkstra" class="color-frontier" style="text-align:center">
+            <div id="diagram-dijkstra-unweighted" style="display:inline-block;margin-right:25px">Поиск &laquo;лучший-первый&raquo;<br></div>
+            <div id="diagram-dijkstra-weighted" style="display:inline-block">Алгоритм Дейкстры<br></div>
+         </div>
+         <p>Шаг или переход, стоимость которого превышает 1, дает нам возможность описывать и другие интересные устройтсва карт, не только сетки. Вот небольшой пример, в котором цена перехода основывается на дальности перемещения по комнате:</p>
+         
+         <div id="diagram-nongrid"></div>
+         <p>Цена перемещения также может быть использована, чтобы избегать или отдавать предпочтение маршрутам, основываясь на том, как близко они ставят нас к противнику.</p>
+         <p>Детали реализации: обыкновенная очередь с приоритетом поддерживает две основные операции: удаление и добавление элемента, однако некоторые реализации алгоритма Дейкстры используют третью операцию: изменение приоритета элемента, уже стоящего в очереди. Я не пользуюсь этой операцией, и <a href="implementation.html">в записках о реализации</a> написано, почему.</p>
+     </div>
+     <div class="h2banner"><h2 id="greedy-best-first"><a class="anchor" href="#greedy-best-first">#</a>Эвристический поиск</h2></div>
+     <div class="topic">
+        <p>В поиске по Дейкстре и &laquo;первый-лучший&raquo; граница разрастается во всех направлениях сразу, и это хорошо работает, в случаях, когда необходимо найти пути ко множеству или всем точкам на карте одновременно. Однако, чаще всего требуется найти путь к какому-то одному месту, так что мы попробуем сделать так, чтобы наша &laquo;волна&raquo; распространялась в сторону цели быстрее, чем куда-либо еще. Сначала обозначим <em>эвристическую</em> (heuristic) функцию, которая будет сообщать нам, насколько мы близки к цели:</p>
+         <pre>
+def heuristic(a, b):
+   # Дистанция на прямоугольной сетке по Манхеттену
+   return abs(a.x - b.x) + abs(a.y - b.y)</pre>
+        <p>В алгоритме Дейкстры мы пользовались действительной дистанцией от старта (<em>start</em>) для упорядочивания очереди по приоритету. Вместо этого, в алгоритме, называющемся <strong>жадным поиском &laquo;лучший-первый&raquo;</strong> (Greedy Best-First Search, Greedy BFS), мы воспользуемся для этого примерным расстоянием до цели (<em>goal</em>), то есть первой в обход попадет ближайшая к цели клетка. В коде используется очередь с приоритетом из поиска &laquo;первый-лучший&raquo;, но не переменная со стоимостью пути <span class="cost_so_far">cost_so_far</span> из алгоитма Дейкстры:</p>
+        <pre>
+frontier = PriorityQueue()
+frontier.put(start, 0)
+came_from = {}
+came_from[start] = None
+
+while not frontier.empty():
+   current = frontier.get()
+
+   if current == goal:
+      break
+   
+   for next in graph.neighbors(current):
+      if next not in came_from:
+         <em>priority = heuristic(goal, next)</em>
+         frontier.put(next, priority)
+         came_from[next] = current</pre>
+         <p>Посмотрим, как этот алгоритм справляется со своей задачей:</p>
+         
+         <div id="diagram-greedybestfirst" class="color-frontier" style="text-align:center">
+            <div class="left" style="display:inline-block;margin-right:25px">Поиск &laquo;первый-лучший&raquo;<br></div>
+            <div class="right" style="display:inline-block">Жадный поиск &laquo;первый-лучший&raquo;<br></div>
+         </div>
+         <p>Ух ты! Намного круче, правда? А что получится, если усложнить карту?</p>
+         
+         <div id="diagram-greedybestfirst-complex" class="color-frontier" style="text-align:center">
+            <div class="left" style="display:inline-block;margin-right:25px">Поиск &laquo;первый-лучший&raquo;<br></div>
+            <div class="right" style="display:inline-block">Жадный поиск &laquo;первый-лучший&raquo;<br></div>
+         </div>
+         <p>Ну это явно не кратчайший путь из возможных. Получается, что алгоритм работает быстрее, если препятствий не так много, но при этом выдает не такие эффективные маршруты. Можем ли мы это исправить? Да!</p>
+     </div>
+     <div class="h2banner"><h2 id="astar"><a class="anchor" href="#astar">#</a>Алгоритм A*</h2></div>
+     <div class="topic">
+        <p>Алгоритм Дейкстры чрезвычайно эффективно находит кратчайшие пути, однако он тратит немало драгоценного времени на обход ненужных полей. Жадный алгоритм &laquo;первый-лучший&raquo; обходит только релевантные поля, но при этом не всегда выдает кратчайший путь. Алгоритм A* сочетает в себе преимущества <em>обоих</em>: в нем учитывается как и вычисленное расстояние от старта, так и предположительное расстояние до цели.</p>
+        <p>Давайте сравним контуры обхода алгоритмов Дейкстры и &laquo;первый-лучший&raquo;. По Дейкстре мы как бы начинаем на самом дне <em>на старте</em> и забираемся наверх к цели, при этом нет уверенности в том, в какой стороне финиш, поэтому приходится лезть во всех направлениях сразу. В жадном алгоритме &laquo;первый-лучший&raquo; мы начинаем в яме <em>у финиша</em> и карабкаемся в сторону цели. Покуда мы знаем нужное направление, все в порядке.</p>
+         
+        <div id="diagram-contour-comparison" style="text-align:center">
+            <div class="left" style="display:inline-block;margin-right:25px">Алгоритм Дейкстры<br></div>
+            <div class="right" style="display:inline-block">Жадный поиск &laquo;первый-лучший&raquo;<br></div>
+            <div class="combined">A*<br></div>
+        </div>
+        <p>A* объединяет в себе оба подхода. В нем контурные линии показывают не дистанцию до цели, но длины <em>маршрутов</em>, внутренние области объединяют кратчайшие пути. A* начинает с обхода этих внутренних областей и двигается дальше только тогда, когда не может найти путь в них. <strong>Попробуйте нарисовать пару стен</strong>, чтобы увидеть, как A* взбирается по ближайшим областям, чтобы найти цель.</p>
+        <p>В плане кода, он очень похож на алгоритм Дейкстры:</p>
+        <pre>
+frontier = PriorityQueue()
+frontier.put(start, 0)
+came_from = {}
+cost_so_far = {}
+came_from[start] = None
+cost_so_far[start] = 0
+
+while not frontier.empty():
+   current = frontier.get()
+
+   for next in graph.neighbors(current):
+      new_cost = cost_so_far[current] + graph.cost(current, next)
+      if next not in cost_so_far or new_cost &lt; cost_so_far[next]:
+         cost_so_far[next] = new_cost
+         priority = new_cost<em> + heuristic(goal, next)</em>
+         frontier.put(next, priority)
+         came_from[next] = current</pre>
+         <p>Сравните:</p>
+         
+         <div id="diagram-astar" style="text-align:center">
+            <div id="diagram-astar-1" style="display:inline-block;padding-right:25px">Алгоритм Дейкстры<br></div>
+             <div id="diagram-astar-2" style="display:inline-block">Жадный поиск &laquo;первый-лучший&raquo;<br></div>
+             <div id="diagram-astar-3">Поиск A*<br></div>
+         </div>
+         <p>Заметьте, что A* старается оставаться как можно ближе к предположительной длине маршрута, согласно которой мы упорядочиваем очередь. Почему же он работает быстрее алгоритма Дейкстры, если в поля, участвующие в обходе в обоих алгоритмах одинаковы? Дело в том, что эвристическая функция позволяет нам обходить поля в таком порядке, что <em>более вероятным</em> становится скорейшее достижение цели.</p>
+         <p>Вот и все! В этом и заключается суть алгоритма A*.</p>
+     </div>
+     <div class="h2banner">
+        <h2 id="more"><a class="anchor" href="#more">#</a>Кое-что еще</h2>
+    </div>
+     <div class="topic"><p>Так каким же алгоритмом пользоваться для просчета путей в ваших игровых пространствах?</p>
+         <ul>
+            <li>Если требуется найти пути от или ко <em>всем</em> местам на карте, используйте поиск &laquo;первый-лучший&raquo; или алгоритм Дейкстры. Первый — для тех случаев, когда стоимость шага везде одинаковая; Дейкстру — если какие-то клетки дороже остальных.</li>
+            <li>Если же требуется найти путь к <em>единственной</em> точке, берите жадный поиск или A*. A* подходит больше в большинстве случаев. Если же жадный поиск кажется вам более предпочтительным, попробуйте A* с <a href="https://en.wikipedia.org/wiki/Admissible_heuristic">недопустимой эвристикой (ссылка на англоязычную вики)</a>.</li>
+        </ul>
+        <p>А что на счет оптимальных путей? Поиск &laquo;первый-лучший&raquo; и алгоритм Дейкстры всегда находят кратчайший путь, в отличие от жадного поиска. A* находит кратчайший путь тогда, когда эвристика не превосходит действительного расстояния до цели. С уменьшением эвристики, A* приближается к алгоритму Дейкстры., а с увеличением — к жадному поиску.</p>
+        <p>Что с производительностью? Лучше всего — удалять как можно больше лишних узлов графа. По вопросам сеток, <a href="../grids/algorithms.html">почитайте здесь</a>. Вообще, уменьшение размеров обходимого графа ускорит работу любого алгоритма, после чего достаточно простейшего алгоритма, который только подойдет — простые очереди быстрее обрабатываются. Жадный поиск работает быстрее Дейкстры, но не всегда выдает оптимальный путь, A* почти всегда остается хорошим вариантом.</p>
+        <p>Какие бывают реализации? Существует множество реализаций этих алгоритмов, составить более-менее полный список было бы исключительно большим трудом. Если вы реализуете алгоритмы сами, посмотрите <a href="implementation.html">мои записки по реализации алгоритмов поиска пути</a>, там я подробно рассмотрел как сами алгоритмы, так и работающие с ними графы. Там приведен неоптимизированный код на C++ и Python и пара советов по оптимизации.</p>
+        <p>Как быть с пространствами, не имеющими карты? Я показывал карты просто потому, что на их примере проще понять принцип действия алгоритмов. Однако, их можно использовать для обхода любых графов, и я попытался показать код, независимый от двумерных сеток. Стоимости шагов на картах — на самом деле вес ребер графа. Эвристика, однако, для нелинейных пространств так просто не переведется — для каждой карты придется проектировать ее самому. Для линейных карт, расстояния — неплохой выбор для составления эвристики, ими я и воспользовался в своем примере..</p>
+        <p>Я много чего написал по поиску путей <a href="http://theory.stanford.edu/~amitp/GameProgramming/">здесь</a>. Нужно понимать, что поиск по графу — лишь часть того, что может пригодится. A* сам по себе не решает множества проблем, как например: движение сообща, движущиеся препятствия, изменчивые карты, обход опасных участков, формации и строй, радиусы поворота, размеры объектов, анимацию, сглаживание пути, и многое другое.</p>
+     </div></div>
+     <div class="divider"></div>
+     
+          
+            <div class="footer" role="contentinfo">
+                
+                  <div style="text-align:right">
+	     <script src="js/d3.v3.min.js"></script><script src="conrec/conrec.js"></script><script src="_introduction.js"></script><script>
+      d3.selectAll("pre").each(function () {
+      var pre = d3.select(this);
+      pre.html(highlight_words(pre.html(), ['frontier', 'start', 'current', 'visited', 'came_from', 'next', 'goal', 'path', 'cost_so_far', 'new_cost']));
+      });
+    </script><script>
+      if ('ontouchstart' in window) {
+      d3.select("#diagram0a").append("div").text("Note: some of the diagrams aren't yet designed for touch screens.");
+      }
+    </script></div></body></html>
